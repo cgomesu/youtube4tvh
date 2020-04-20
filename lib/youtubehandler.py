@@ -3,11 +3,13 @@ import requests
 
 class YoutubeHandler:
     def __init__(self,
+                 apiurl,
                  apikey,
                  channelid,
                  channelurl,
                  channelname,
                  channellogo):
+        self.apiurl = apiurl
         self.apikey = apikey
         self.channelid = channelid
         self.channelurl = channelurl
@@ -23,17 +25,18 @@ class YoutubeHandler:
                 "key": self.apikey,
                 "part": "id"
             }
-            response = requests.get(self.channelurl + resource, params=parameters)
+            response = requests.get(self.apiurl + resource, params=parameters)
             status = response.status_code
             # Parse JSON for key status
             if status != 200:
                 reason = response.json()["error"]["errors"][0]["reason"]
                 if reason == "keyInvalid":
-                    print("The Youtube API key is not valid. Review your credentials. Key provided: {}".format(self.apikey))
+                    print("The Youtube API key is not valid. "
+                          "Review your credentials. Key provided: {}".format(self.apikey))
                     return False
                 print("Unable to validate the Youtube API key. Key: {}".format(reason))
                 return False
-            print("The Youtube API key is valid.")
+            print("The Youtube API key is valid!")
             return True
         except Exception as err:
             print("There was an error while trying to validate the Youtube API key: {}".format(err))
@@ -52,7 +55,7 @@ class YoutubeHandler:
                 "eventType": "live",
                 "order": "date"
             }
-            response = requests.get(self.channelurl + resource, params=parameters)
+            response = requests.get(self.apiurl + resource, params=parameters)
             items = response.json()["items"]
             # Check if there's a live-stream available at all. Exit without changing anything otherwise.
             if not items:
@@ -72,6 +75,15 @@ class YoutubeHandler:
                 "region": response.json()["regionCode"].encode("utf-8")
             }
             print("Done extracting info from the live-stream!")
+            print("- Title: {} \n"
+                  "- Description: {} \n"
+                  "- URL: {} \n"
+                  "- Region: {} \n"
+                  "- Published at: {}".format(video["title"],
+                                              video["description"],
+                                              video["url"],
+                                              video["region"],
+                                              video["date"]))
             return video
         except Exception as err:
             print("There was an error while trying to retrieve the videoId from the live-stream: {}".format(err))
@@ -90,7 +102,7 @@ class YoutubeHandler:
                 "fields": "items/snippet/channelId",
                 "q": self.channelname
             }
-            response = requests.get(self.channelurl + resource, params=parameters)
+            response = requests.get(self.apiurl + resource, params=parameters)
             # Get channelId from json
             self.channelid = response.json()["items"][0]["snippet"]["channelId"]
             print("The channel ID is: {}".format(self.channelid))
@@ -111,7 +123,7 @@ class YoutubeHandler:
                 "channelId": self.channelid,
                 "fields": "items/snippet/thumbnails/default/url"
             }
-            response = requests.get(self.channelurl + resource, params=parameters)
+            response = requests.get(self.apiurl + resource, params=parameters)
             # Get channelId from json
             self.channellogo = response.json()["items"][0]["snippet"]["thumbnails"]["default"]["url"]
             print("The URL of the channel's logo is: {}".format(self.channellogo))
