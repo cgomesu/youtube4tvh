@@ -2,6 +2,7 @@ import requests
 
 
 class YoutubeHandler:
+
     def __init__(self,
                  apiurl,
                  apikey,
@@ -16,7 +17,7 @@ class YoutubeHandler:
         self.channelname = channelname
         self.channellogo = channellogo
 
-    def api_validation(self):
+    def validate_api(self):
         # Checks whether the Youtube API key is valid or not
         try:
             # Check https://developers.google.com/youtube/v3/docs
@@ -60,9 +61,9 @@ class YoutubeHandler:
             # Check if there's a live-stream available at all. Exit without changing anything otherwise.
             if not items:
                 print("Unable to find a live-stream on channel ID {}".format(self.channelid))
-                print("The script will exit without updating the youtubelive.m3u file. Bye!")
+                print("The script will now exit. Bye!")
                 exit()
-            print("A live-stream was found.  Extracting info...")
+            print("A live-stream was found!  Extracting info from it...")
             # Parse video info from json
             # Make sure to encode(utf-8) because otherwise we'll get some unicode error,
             # owing to the presence of special characters in title, description, etc., and that's no bueno.
@@ -90,7 +91,7 @@ class YoutubeHandler:
             exit()
 
     def find_id(self):
-        # Adds the first channelId from the channel that best matches the query to the channelid variable
+        # Finds the ID of the channel that best matches the NAME provided
         try:
             # Check https://developers.google.com/youtube/v3/docs
             resource = "search"
@@ -112,7 +113,7 @@ class YoutubeHandler:
             exit()
 
     def find_logo(self):
-        # Retrieves the default logo URL of the channel with the selected channelId
+        # Find the URL of the channel's default logo
         try:
             # Check https://developers.google.com/youtube/v3/docs
             resource = "search"
@@ -124,7 +125,7 @@ class YoutubeHandler:
                 "fields": "items/snippet/thumbnails/default/url"
             }
             response = requests.get(self.apiurl + resource, params=parameters)
-            # Get channelId from json
+            # Get channel logo from json
             self.channellogo = response.json()["items"][0]["snippet"]["thumbnails"]["default"]["url"]
             print("The URL of the channel's logo is: {}".format(self.channellogo))
             return self.channellogo
