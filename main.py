@@ -38,7 +38,18 @@ parser_cli.add_argument("--outputfile",
                         required=False,
                         default="output.m3u",
                         type=str,
-                        help="Add the /path/to/output_playlist.m3u")
+                        help="Add the /path/to/output.m3u. Default is output.m3u.")
+parser_cli.add_argument("--pathbash",
+                        required=False,
+                        default="/bin/bash",
+                        type=str,
+                        help="Add the /path/to/bash. Default is /bin/bash.")
+parser_cli.add_argument("--pathsh",
+                        required=False,
+                        default="/opt/youtubelivem3u/bash/streamlink.sh",
+                        type=str,
+                        help="Add the /path/to/streamlink.sh bash script. "
+                             "Default is /opt/youtubelivem3u/bash/streamlink.sh.")
 args_cli = vars(parser_cli.parse_args())
 
 
@@ -57,33 +68,67 @@ def main():
     # Find channel id
     if not args_cli["channelid"]:
         print("[INFO] Retrieving the channel ID using the channel NAME provided...")
-        youtube.find_id()
+        args_cli["channelid"] = youtube.find_id()
     # Find channel logo
     if not args_cli["channellogo"]:
         print("[INFO] Retrieving the URL of the channel's default logo...")
-        youtube.find_logo()
+        args_cli["channellogo"] = youtube.find_logo()
     print("[INFO] Retrieving info from the channel's live-stream...")
     # Find info from the channel's live-stream
     stream = youtube.find_stream()
-    # TODO: Add m3u handler functions
-    # TODO: Add or update stream info to the m3u file
 
     # M3U handler
     m3u = M3uHandler(args_cli["inputfile"],
                      args_cli["outputfile"])
     # Parse existing input m3u file
     if args_cli["inputfile"]:
-        print("[INFO] Found an input M3U playlist at {}.  "
+        print("[INFO] User provided an input M3U playlist at {}.  "
               "Will try to parse it and create a data frame...".format(args_cli["inputfile"]))
         m3u_df = m3u.parse()
         if m3u_df is None:
             m3u_df = m3u.template()
+        # Search data frame for the same stream
+        channelsearch = m3u.search()
+        if channelsearch:
+            print("[INFO] Found the same channel on {}. "
+                  "Will try to update its info to {}...".format(args_cli["inputfile"], args_cli["outputfile"]))
+            m3u_df = m3u.update(m3u_df,
+                                channelsearch,
+                                args_cli["channelid"],
+                                args_cli["channelname"],
+                                stream["region"],
+                                args_cli["channellogo"],
+                                args_cli["pathbash"],
+                                args_cli["pathsh"],
+                                stream["url"])
+        elif not channelsearch:
+            print("[INFO] Did not find the same channel on {}. "
+                  "Will append the channel info to {}...".format(args_cli["inputfile"], args_cli["ouputtfile"]))
+            m3u_df = m3u.append(m3u_df,
+                                args_cli["channelid"],
+                                args_cli["channelname"],
+                                stream["region"],
+                                args_cli["channellogo"],
+                                args_cli["pathbash"],
+                                args_cli["pathsh"],
+                                stream["url"])
     # Else, create a template data frame
     elif not args_cli["inputfile"]:
         print("[INFO] Did not find an input M3U playlist.  "
               "Will create a template data frame...")
         m3u_df = m3u.template()
-    print(m3u_df)
+        m3u_df = m3u.append(m3u_df,
+                            args_cli["channelid"],
+                            args_cli["channelname"],
+                            stream["region"],
+                            args_cli["channellogo"],
+                            args_cli["pathbash"],
+                            args_cli["pathsh"],
+                            stream["url"])
+
+    # Write m3u data frame to a .m3u file
+    m3u.write(m3u_df)
+    print("We're all done here. Bye!")
     exit()
 
 

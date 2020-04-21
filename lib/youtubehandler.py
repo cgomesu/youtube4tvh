@@ -35,7 +35,7 @@ class YoutubeHandler:
                     print("The Youtube API key is not valid. "
                           "Review your credentials. Key provided: {}".format(self.apikey))
                     return False
-                print("Unable to validate the Youtube API key. Key: {}".format(reason))
+                print("Unable to validate the Youtube API key. Reason: {}".format(reason))
                 return False
             print("The Youtube API key is valid!")
             return True
