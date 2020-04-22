@@ -155,7 +155,7 @@ class M3uHandler:
                pathbash,
                pathsh,
                url):
-        df = dataframe
+        # Append stream data to data frame
         channelcontent = "#EXTINF:-1 " \
                          "tvg-id=\"{}\" " \
                          "tvg-name=\"{}\" " \
@@ -183,14 +183,103 @@ class M3uHandler:
             "tvg-country": channelcountry,
             "tvg-logo": channellogo,
             "tvg-url": "",
+            "group-title": "",
             "stream-url": "pipe://{} {} {}".format(pathbash, pathsh, url)
         }
-        # Append stream data to data frame
         try:
-            df = df.append(data, ignore_index=True)
+            df = dataframe.append(data, ignore_index=True)
             return df
         except Exception as err:
-            print("There was an error appending data to data frame. Error: {}".format(err))
+            print("There was an error APPENDING data to data frame. Error: {}".format(err))
+            return None
+
+    def search(self, dataframe, column, term):
+        # Return True if there's at least one cell containing the term in the data frame
+        try:
+            boolsearch = dataframe[column].str.contains(term).any()
+            if boolsearch:
+                print("Found at least one match for the term {} on the data frame column {}.".format(term, column))
+                return True
+            print("Did not find any cell containing the term {} on the data frame column {}.".format(term, column))
+            return False
+        except Exception as err:
+            print("There was an error searching for the term {} on column {}. Error: {}".format(term, column, err))
+            return False
+
+    def update(self,
+               dataframe,
+               channelid,
+               channelname,
+               channelcountry,
+               channellogo,
+               pathbash,
+               pathsh,
+               url):
+        # Search and update a channel's info in the data frame
+        df = dataframe
+        try:
+            # Find index that contains the channel ID under tvg-id
+            target_index = df.loc[df["tvg-id"] == channelid].index
+
+            # Do not override existing info from the m3u file, except for the stream url
+            if df.at[target_index[0], "tvg-name"]:
+                channelname = df.at[target_index[0], "tvg-name"]
+
+            channellang = df.at[target_index[0], "tvg-language"]
+
+            if df.at[target_index[0], "tvg-country"]:
+                channelcountry = df.at[target_index[0], "tvg-country"]
+
+            if df.at[target_index[0], "tvg-logo"]:
+                channellogo = df.at[target_index[0], "tvg-logo"]
+
+            channelepgurl = df.at[target_index[0], "tvg-url"]
+            channelgroup = df.at[target_index[0], "group-title"]
+
+            # Update individual cells from that row
+            channelcontent = "#EXTINF:-1 " \
+                             "tvg-id=\"{}\" " \
+                             "tvg-name=\"{}\" " \
+                             "tvg-language=\"{}\" " \
+                             "tvg-country=\"{}\" " \
+                             "tvg-logo=\"{}\" " \
+                             "tvg-url=\"{}\" " \
+                             "group-title=\"{}\"," \
+                             "{}\n" \
+                             "pipe://{} {} {}".format(channelid,
+                                                      channelname,
+                                                      channellang,
+                                                      channelcountry,
+                                                      channellogo,
+                                                      channelepgurl,
+                                                      channelgroup,
+                                                      channelname,
+                                                      pathbash,
+                                                      pathsh,
+                                                      url)
+            data = {
+                "channel-content": channelcontent,
+                "channel-name": channelname,
+                "channel-duration": "-1",
+                "tvg-id": channelid,
+                "tvg-name": channelname,
+                "tvg-language": channellang,
+                "tvg-country": channelcountry,
+                "tvg-logo": channellogo,
+                "tvg-url": channelepgurl,
+                "group-title": channelgroup,
+                "stream-url": "pipe://{} {} {}".format(pathbash, pathsh, url)
+            }
+            df.at[target_index[0], "tvg-name"] = data["channel-name"]
+            df.at[target_index[0], "tvg-language"] = data["tvg-language"]
+            df.at[target_index[0], "tvg-country"] = data["tvg-country"]
+            df.at[target_index[0], "tvg-logo"] = data["tvg-logo"]
+            df.at[target_index[0], "tvg-url"] = data["tvg-url"]
+            df.at[target_index[0], "group-title"] = data["group-title"]
+            df.at[target_index[0], "stream-url"] = data["stream-url"]
+            return df
+        except Exception as err:
+            print("There was an error UPDATING the data frame. Error: {}".format(err))
             return None
 
     def write(self, dataframe):
@@ -234,3 +323,10 @@ class M3uHandler:
                 print("Data frame successfully written to {}!".format(self.outputfile))
         except Exception as err:
             print("There was an error writing the data frame to the m3u file. Error: {}".format(err))
+
+    def export_csv(self, dataframe):
+        try:
+            dataframe.to_csv("output.csv", index=False)
+            print("Data frame was successfully exported to output.csv!")
+        except Exception as err:
+            print("There was an error exporting the data frame to a csv file. Error: {}".format(err))

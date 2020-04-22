@@ -1,7 +1,7 @@
 from lib.m3uhandler import M3uHandler
 from lib.youtubehandler import YoutubeHandler
 from argparse import ArgumentParser
-from pathlib import Path
+# from pathlib import Path
 
 
 def cli():
@@ -110,12 +110,12 @@ def main():
                             args_cli["pathstreamlinksh"],
                             stream["url"])
     elif not m3u_df.empty:
-        channelsearch = m3u.search()
+        # Check if the channel id exists in the data frame
+        channelsearch = m3u.search(m3u_df, "tvg-id", args_cli["channelid"])
         if channelsearch:
             print("[INFO] Found the same channel on {}. "
                   "Will try to update its info to {}...".format(args_cli["inputfile"], args_cli["outputfile"]))
             m3u_df = m3u.update(m3u_df,
-                                channelsearch,
                                 args_cli["channelid"],
                                 args_cli["channelname"],
                                 stream["region"],
@@ -123,9 +123,19 @@ def main():
                                 args_cli["pathbash"],
                                 args_cli["pathstreamlinksh"],
                                 stream["url"])
+            if m3u_df is None:
+                print("[INFO] Will now try to append the channel info to {}...".format(args_cli["outputfile"]))
+                m3u_df = m3u.append(m3u_df,
+                                    args_cli["channelid"],
+                                    args_cli["channelname"],
+                                    stream["region"],
+                                    args_cli["channellogo"],
+                                    args_cli["pathbash"],
+                                    args_cli["pathstreamlinksh"],
+                                    stream["url"])
         elif not channelsearch:
             print("[INFO] Did not find the same channel on {}. "
-                  "Will append the channel info to {}...".format(args_cli["inputfile"], args_cli["ouputtfile"]))
+                  "Will append the channel info to {}...".format(args_cli["inputfile"], args_cli["outputfile"]))
             m3u_df = m3u.append(m3u_df,
                                 args_cli["channelid"],
                                 args_cli["channelname"],
@@ -136,6 +146,7 @@ def main():
                                 stream["url"])
     # Consolidate m3u data frame to a .m3u file
     m3u.write(m3u_df)
+    m3u.export_csv(m3u_df)
     print("We're all done here. Bye!")
     exit()
 
