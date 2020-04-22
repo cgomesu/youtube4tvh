@@ -120,12 +120,11 @@ class M3uHandler:
                                                             'group-title',
                                                             'stream-url'])
                 if df.empty:
-                    print("Empty DataFrame. The script was unable to parse anything from the file.")
-                    return None
+                    raise Exception
                 return df
         except Exception as err:
             print("There was an error parsing the m3u file: {}".format(err))
-            print("Assuming Empty DataFrame.")
+            print("Will continue but data frame is None.")
             return None
 
     def template(self):
@@ -144,6 +143,7 @@ class M3uHandler:
             "stream-url": []
         }
         df = pandas.DataFrame(data)
+        print("Empty data frame created.")
         return df
 
     def append(self,
@@ -194,7 +194,7 @@ class M3uHandler:
             return None
 
     def write(self, dataframe):
-        # Uses a data frame to output a m3u file
+        # Consolidate a m3u data frame to a m3u file
         try:
             with open(self.outputfile, "w") as f:
                 f.write("#EXTM3U\n")
@@ -230,11 +230,7 @@ class M3uHandler:
                                                           channel_data["group-title"],
                                                           channel_data["channel-name"],
                                                           channel_data["stream-url"])
-                    # TODO: Validate the output before appending data to it
                     f.write(str_channel_data)
                 print("Data frame successfully written to {}!".format(self.outputfile))
-                return True
         except Exception as err:
-            print("There was an error while working with the m3u file. Error: {}".format(err))
-            print("Assuming nothing was written to {}.".format(self.outputfile))
-            return False
+            print("There was an error writing the data frame to the m3u file. Error: {}".format(err))

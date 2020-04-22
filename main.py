@@ -1,60 +1,65 @@
 from lib.m3uhandler import M3uHandler
 from lib.youtubehandler import YoutubeHandler
-import argparse
+from argparse import ArgumentParser
+from pathlib import Path
 
 
-# Parse CLI arguments
-parser_cli = argparse.ArgumentParser()
-parser_cli.add_argument("--apikey",
-                        type=str,
-                        required=True,
-                        help="API key to use the Youtube API.")
-parser_cli.add_argument("--apiurl",
-                        type=str,
-                        default="https://www.googleapis.com/youtube/v3/",
-                        required=False,
-                        help="Base URL to the Youtube API. Default is the Youtube API v3.")
-parser_cli.add_argument("--channelid",
-                        required=False,
-                        type=str,
-                        help="The ID of a channel with a live-stream.")
-parser_cli.add_argument("--channellogo",
-                        required=False,
-                        type=str,
-                        help="The URL of the channel's LOGO.")
-parser_cli.add_argument("--channelname",
-                        required=True,
-                        type=str,
-                        help="The NAME of the channel with a live-stream.")
-parser_cli.add_argument("--channelurl",
-                        required=False,
-                        type=str,
-                        help="The URL of a channel with a live-stream.")
-parser_cli.add_argument("--inputfile",
-                        required=False,
-                        type=str,
-                        help="Add the /path/to/input_playlist.m3u")
-parser_cli.add_argument("--outputfile",
-                        required=False,
-                        default="output.m3u",
-                        type=str,
-                        help="Add the /path/to/output.m3u. Default is output.m3u.")
-parser_cli.add_argument("--pathbash",
-                        required=False,
-                        default="/bin/bash",
-                        type=str,
-                        help="Add the /path/to/bash. Default is /bin/bash.")
-parser_cli.add_argument("--pathsh",
-                        required=False,
-                        default="/opt/youtubelivem3u/bash/streamlink.sh",
-                        type=str,
-                        help="Add the /path/to/streamlink.sh bash script. "
-                             "Default is /opt/youtubelivem3u/bash/streamlink.sh.")
-args_cli = vars(parser_cli.parse_args())
+def cli():
+    ap = ArgumentParser()
+    ap.add_argument("--apikey",
+                    type=str,
+                    required=True,
+                    help="API KEY to use the Youtube API.")
+    ap.add_argument("--apiurl",
+                    type=str,
+                    default="https://www.googleapis.com/youtube/v3/",
+                    required=False,
+                    help="Base URL of the Youtube API. Default is the Youtube API v3.")
+    ap.add_argument("--channelid",
+                    required=False,
+                    type=str,
+                    help="ID of a channel with a live-stream.")
+    ap.add_argument("--channellogo",
+                    required=False,
+                    type=str,
+                    help="URL of the channel's LOGO.")
+    ap.add_argument("--channelname",
+                    required=True,
+                    type=str,
+                    help="NAME of the channel with a live-stream.")
+    ap.add_argument("--channelurl",
+                    required=False,
+                    type=str,
+                    help="The URL of a channel with a live-stream.")
+    ap.add_argument("--inputfile",
+                    required=False,
+                    type=str,
+                    help="/path/to/input_playlist.m3u")
+    ap.add_argument("--outputfile",
+                    required=False,
+                    default="output.m3u",
+                    type=str,
+                    help="/path/to/output.m3u. Default is output.m3u.")
+    ap.add_argument("--pathbash",
+                    required=False,
+                    default="/bin/bash",
+                    type=str,
+                    help="Absolute /path/to/bash. Default is /bin/bash.")
+    ap.add_argument("--pathstreamlinksh",
+                    required=False,
+                    default="/opt/youtubelivem3u/streamlink.sh",
+                    type=str,
+                    help="Absolute /path/to/streamlink.sh. Default is /opt/youtubelivem3u/streamlink.sh.")
+    return vars(ap.parse_args())
+
+
+# def os_path():
+#    folder = Path().parent.absolute()
+#    return folder
 
 
 def main():
-    # Youtube API handler
+    # YOUTUBE API HANDLER
     youtube = YoutubeHandler(args_cli["apiurl"],
                              args_cli["apikey"],
                              args_cli["channelid"],
@@ -77,7 +82,7 @@ def main():
     # Find info from the channel's live-stream
     stream = youtube.find_stream()
 
-    # M3U handler
+    # M3U HANDLER
     m3u = M3uHandler(args_cli["inputfile"],
                      args_cli["outputfile"])
     # Parse existing input m3u file
@@ -86,8 +91,25 @@ def main():
               "Will try to parse it and create a data frame...".format(args_cli["inputfile"]))
         m3u_df = m3u.parse()
         if m3u_df is None:
+            print("[INFO] Generating an empty data frame...")
             m3u_df = m3u.template()
-        # Search data frame for the same stream
+    # Else, create a template data frame
+    elif not args_cli["inputfile"]:
+        print("[INFO] Did not find an input M3U playlist.  "
+              "Generating an empty data frame...")
+        m3u_df = m3u.template()
+    # Append or update data frame
+    if m3u_df.empty:
+        print("[INFO] Appending stream info to data frame...")
+        m3u_df = m3u.append(m3u_df,
+                            args_cli["channelid"],
+                            args_cli["channelname"],
+                            stream["region"],
+                            args_cli["channellogo"],
+                            args_cli["pathbash"],
+                            args_cli["pathstreamlinksh"],
+                            stream["url"])
+    elif not m3u_df.empty:
         channelsearch = m3u.search()
         if channelsearch:
             print("[INFO] Found the same channel on {}. "
@@ -99,7 +121,7 @@ def main():
                                 stream["region"],
                                 args_cli["channellogo"],
                                 args_cli["pathbash"],
-                                args_cli["pathsh"],
+                                args_cli["pathstreamlinksh"],
                                 stream["url"])
         elif not channelsearch:
             print("[INFO] Did not find the same channel on {}. "
@@ -110,27 +132,14 @@ def main():
                                 stream["region"],
                                 args_cli["channellogo"],
                                 args_cli["pathbash"],
-                                args_cli["pathsh"],
+                                args_cli["pathstreamlinksh"],
                                 stream["url"])
-    # Else, create a template data frame
-    elif not args_cli["inputfile"]:
-        print("[INFO] Did not find an input M3U playlist.  "
-              "Will create a template data frame...")
-        m3u_df = m3u.template()
-        m3u_df = m3u.append(m3u_df,
-                            args_cli["channelid"],
-                            args_cli["channelname"],
-                            stream["region"],
-                            args_cli["channellogo"],
-                            args_cli["pathbash"],
-                            args_cli["pathsh"],
-                            stream["url"])
-
-    # Write m3u data frame to a .m3u file
+    # Consolidate m3u data frame to a .m3u file
     m3u.write(m3u_df)
     print("We're all done here. Bye!")
     exit()
 
 
 if __name__ == "__main__":
+    args_cli = cli()
     main()
