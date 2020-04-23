@@ -47,6 +47,7 @@ class YoutubeHandler:
         # Retrieves info from the live-stream of a specified channelId
         try:
             # Check https://developers.google.com/youtube/v3/docs
+            # If multiple streams, prioritize highest view count
             resource = "search"
             parameters = {
                 "key": self.apikey,
@@ -54,7 +55,7 @@ class YoutubeHandler:
                 "channelId": self.channelid,
                 "type": "video",
                 "eventType": "live",
-                "order": "date"
+                "order": "viewCount"
             }
             response = requests.get(self.apiurl + resource, params=parameters)
             items = response.json()["items"]

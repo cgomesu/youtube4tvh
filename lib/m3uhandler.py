@@ -4,9 +4,11 @@ import pandas
 
 class M3uHandler:
 
-    def __init__(self, inputfile, outputfile):
-        self.inputfile = inputfile
-        self.outputfile = outputfile
+    def __init__(self, inputm3u, outputm3u, inputcsv, outputcsv):
+        self.inputm3u = inputm3u
+        self.outputm3u = outputm3u
+        self.inputcsv = inputcsv
+        self.outputcsv = outputcsv
 
     def parse(self):
         # Define regex dictionary for iptv m3u files
@@ -71,7 +73,7 @@ class M3uHandler:
         # TODO: Validate m3u file before parsing it
         # Writes m3u file to a data frame
         try:
-            with open(self.inputfile, 'r') as f:
+            with open(self.inputm3u, 'r') as f:
                 parsed_data = (
                     (channel_content.group('channel_content'),
                      channel_name.group('channel_name'),
@@ -107,7 +109,6 @@ class M3uHandler:
                     for stream_url in
                     rx_dict['stream_url'].finditer(channel_content.group('channel_content'))
                 )
-
                 df = pandas.DataFrame(parsed_data, columns=['channel-content',
                                                             'channel-name',
                                                             'channel-duration',
@@ -120,6 +121,7 @@ class M3uHandler:
                                                             'group-title',
                                                             'stream-url'])
                 if df.empty:
+                    print("The data frame is empty after parsing the m3u file!")
                     raise Exception
                 return df
         except Exception as err:
@@ -283,9 +285,9 @@ class M3uHandler:
             return None
 
     def write(self, dataframe):
-        # Consolidate a m3u data frame to a m3u file
+        # Consolidate a m3u data frame to a .m3u file
         try:
-            with open(self.outputfile, "w") as f:
+            with open(self.outputm3u, "w") as f:
                 f.write("#EXTM3U\n")
                 for row in range(dataframe.shape[0]):
                     channel_data = {
@@ -320,13 +322,14 @@ class M3uHandler:
                                                           channel_data["channel-name"],
                                                           channel_data["stream-url"])
                     f.write(str_channel_data)
-                print("Data frame successfully written to {}!".format(self.outputfile))
+                print("Data frame successfully written to {}!".format(self.outputm3u))
         except Exception as err:
             print("There was an error writing the data frame to the m3u file. Error: {}".format(err))
 
     def export_csv(self, dataframe):
+        # Consolidate a m3u data frame to a .csv file
         try:
-            dataframe.to_csv("output.csv", index=False)
-            print("Data frame was successfully exported to output.csv!")
+            dataframe.to_csv(self.outputcsv, index=False)
+            print("Data frame was successfully exported to {}!".format(self.outputcsv))
         except Exception as err:
             print("There was an error exporting the data frame to a csv file. Error: {}".format(err))
