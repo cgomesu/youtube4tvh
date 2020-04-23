@@ -13,15 +13,7 @@ class M3uHandler:
     def parse(self):
         # Define regex dictionary for iptv m3u files
         rx_dict = {
-            'header_m3u': re.compile(
-                r"^\#EXTM3U",
-                re.IGNORECASE | re.VERBOSE
-            ),
-            'header_extinf': re.compile(
-                r"^\#EXTINF",
-                re.IGNORECASE | re.MULTILINE | re.VERBOSE
-            ),
-            'header_others': re.compile(
+            'bad_header': re.compile(
                 r"^\#(?!EXTM3U|EXTINF).*",
                 re.IGNORECASE | re.MULTILINE | re.VERBOSE
             ),
@@ -70,9 +62,23 @@ class M3uHandler:
                 re.IGNORECASE | re.MULTILINE | re.VERBOSE
             )
         }
-        # TODO: Validate m3u file before parsing it
+        try:
+            print("Validating the m3u file...")
+            with open(self.inputm3u, 'r') as f:
+                if rx_dict['bad_header'].search(f.read()) is not None:
+                    print("The PARSER is unable to VALIDATE the m3u file {} because it has \n"
+                          "at least one #HEADER different than #EXTM3U or #EXTINF. Remove the \n"
+                          "bad header(s) to allow the program to parse your m3u file.".format(self.inputm3u))
+                    raise Exception
+                print("Did not find bad headers in the m3u file {}.".format(self.inputm3u))
+                pass
+        except Exception as err:
+            print("There was an error VALIDATING the m3u file: {}".format(err))
+            print("Will continue but data frame is None.")
+            return None
         # Writes m3u file to a data frame
         try:
+            print("Parsing the m3u file...")
             with open(self.inputm3u, 'r') as f:
                 parsed_data = (
                     (channel_content.group('channel_content'),
@@ -123,30 +129,12 @@ class M3uHandler:
                 if df.empty:
                     print("The data frame is empty after parsing the m3u file!")
                     raise Exception
+                print("The m3u file was successfully parsed!")
                 return df
         except Exception as err:
             print("There was an error parsing the m3u file: {}".format(err))
             print("Will continue but data frame is None.")
             return None
-
-    def template(self):
-        # Create a template data frame with m3u column labels
-        data = {
-            "channel-content": [],
-            "channel-name": [],
-            "channel-duration": [],
-            "tvg-id": [],
-            "tvg-name": [],
-            "tvg-language": [],
-            "tvg-country": [],
-            "tvg-logo": [],
-            "tvg-url": [],
-            "group-title": [],
-            "stream-url": []
-        }
-        df = pandas.DataFrame(data)
-        print("Empty data frame created.")
-        return df
 
     def append(self,
                dataframe,
@@ -195,18 +183,46 @@ class M3uHandler:
             print("There was an error APPENDING data to data frame. Error: {}".format(err))
             return None
 
+    def export_csv(self, dataframe):
+        # Consolidate a m3u data frame to a .csv file
+        try:
+            dataframe.to_csv(self.outputcsv, index=False)
+            print("Data frame was successfully exported to {}!".format(self.outputcsv))
+        except Exception as err:
+            print("There was an error exporting the data frame to a csv file. Error: {}".format(err))
+
     def search(self, dataframe, column, term):
         # Return True if there's at least one cell containing the term in the data frame
         try:
-            boolsearch = dataframe[column].str.contains(term).any()
-            if boolsearch:
+            searchboolean = dataframe[column].str.contains(term).any()
+            if searchboolean:
                 print("Found at least one match for the term {} on the data frame column {}.".format(term, column))
                 return True
-            print("Did not find any cell containing the term {} on the data frame column {}.".format(term, column))
-            return False
+            elif not searchboolean:
+                print("Did not find any cell containing the term {} on the data frame column {}.".format(term, column))
+                return False
         except Exception as err:
             print("There was an error searching for the term {} on column {}. Error: {}".format(term, column, err))
             return False
+
+    def template(self):
+        # Create a template data frame with m3u column labels
+        data = {
+            "channel-content": [],
+            "channel-name": [],
+            "channel-duration": [],
+            "tvg-id": [],
+            "tvg-name": [],
+            "tvg-language": [],
+            "tvg-country": [],
+            "tvg-logo": [],
+            "tvg-url": [],
+            "group-title": [],
+            "stream-url": []
+        }
+        df = pandas.DataFrame(data)
+        print("Empty data frame created.")
+        return df
 
     def update(self,
                dataframe,
@@ -279,10 +295,12 @@ class M3uHandler:
             df.at[target_index[0], "tvg-url"] = data["tvg-url"]
             df.at[target_index[0], "group-title"] = data["group-title"]
             df.at[target_index[0], "stream-url"] = data["stream-url"]
-            return df
+            boolean = True
+            return df, boolean
         except Exception as err:
             print("There was an error UPDATING the data frame. Error: {}".format(err))
-            return None
+            boolean = False
+            return df, boolean
 
     def write(self, dataframe):
         # Consolidate a m3u data frame to a .m3u file
@@ -322,14 +340,8 @@ class M3uHandler:
                                                           channel_data["channel-name"],
                                                           channel_data["stream-url"])
                     f.write(str_channel_data)
-                print("Data frame successfully written to {}!".format(self.outputm3u))
+                print("Data frame was successfully exported to {}!".format(self.outputm3u))
         except Exception as err:
             print("There was an error writing the data frame to the m3u file. Error: {}".format(err))
 
-    def export_csv(self, dataframe):
-        # Consolidate a m3u data frame to a .csv file
-        try:
-            dataframe.to_csv(self.outputcsv, index=False)
-            print("Data frame was successfully exported to {}!".format(self.outputcsv))
-        except Exception as err:
-            print("There was an error exporting the data frame to a csv file. Error: {}".format(err))
+

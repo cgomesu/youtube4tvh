@@ -1,7 +1,6 @@
 from lib.m3uhandler import M3uHandler
 from lib.youtubehandler import YoutubeHandler
 from argparse import ArgumentParser
-# from pathlib import Path
 
 
 def cli():
@@ -62,11 +61,6 @@ def cli():
     return vars(ap.parse_args())
 
 
-# def os_path():
-#    folder = Path().parent.absolute()
-#    return folder
-
-
 def main():
     # YOUTUBE API HANDLER
     youtube = YoutubeHandler(args_cli["apiurl"],
@@ -124,15 +118,17 @@ def main():
         m3u_df = m3u.append(m3u_df, **m3u_parameters)
     elif not m3u_df.empty:
         # Check if the channel id exists in the data frame
-        channelsearch = m3u.search(m3u_df, "tvg-id", args_cli["channelid"])
-        if channelsearch:
+        chboolean = m3u.search(m3u_df, "tvg-id", args_cli["channelid"])
+        if chboolean:
             print("[INFO] Found the same channel on {}. "
-                  "Will try to update its info to {}...".format(args_cli["inputm3u"], args_cli["outputm3u"]))
-            m3u_df = m3u.update(m3u_df, **m3u_parameters)
-            if m3u_df is None:
-                print("[INFO] Will now try to append the channel info to {}...".format(args_cli["outputm3u"]))
+                  "Updating its url in the data frame...".format(args_cli["inputm3u"], args_cli["outputm3u"]))
+            m3u_df, upboolean = m3u.update(m3u_df, **m3u_parameters)
+            # Check if update() returned None owing to an error while updating channel data
+            if not upboolean:
+                print("[INFO] It seems update() failed. "
+                      "Will try to append the channel info to {} instead...".format(args_cli["outputm3u"]))
                 m3u_df = m3u.append(m3u_df, **m3u_parameters)
-        elif not channelsearch:
+        elif not chboolean:
             print("[INFO] Did not find the same channel on {}. "
                   "Will append the channel info to {}...".format(args_cli["inputm3u"], args_cli["outputm3u"]))
             m3u_df = m3u.append(m3u_df, **m3u_parameters)
