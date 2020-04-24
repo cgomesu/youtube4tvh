@@ -1,6 +1,20 @@
-# Youtube Live M3U
-Youtube Live M3U is a Python CLI program that extracts info from Youtube live-streams and creates/updates a M3U 
-playlist that uses Streamlink (https://streamlink.github.io/) to feed a TVHeadend server.
+# Youtube 4 TVH
+Youtube 4 TVH is a non-interactive CLI Python program that uses Youtube API to 
+find live-streams and create (or update) m3u playlists with them. The m3u file 
+follows IPTV conventions that allow a TVHeadend server to create an IPTV network 
+with them, and each stream is piped into TVHeadend via a Streamlink 
+(https://streamlink.github.io/) shell script.
+
+# TVH layout
+
+![TVH layout](img/tvhlayout.png)
+
+# Requirements
+Python
+
+Python packages: Pandas (pandas), RegEx (re), and Requests (requests)
+
+Youtube API key (https://developers.google.com/youtube/v3/getting-started)
 
 # Status
 ```diff
