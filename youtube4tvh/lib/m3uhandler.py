@@ -196,10 +196,8 @@ class M3uHandler:
         try:
             searchboolean = dataframe[column].str.contains(term).any()
             if searchboolean:
-                print("Found at least one match for the term {} on the data frame column {}.".format(term, column))
                 return True
             elif not searchboolean:
-                print("Did not find any cell containing the term {} on the data frame column {}.".format(term, column))
                 return False
         except Exception as err:
             print("There was an error searching for the term {} on column {}. Error: {}".format(term, column, err))
@@ -248,8 +246,8 @@ class M3uHandler:
             if df.at[target_index[0], "tvg-country"]:
                 channelcountry = df.at[target_index[0], "tvg-country"]
 
-            if df.at[target_index[0], "tvg-logo"]:
-                channellogo = df.at[target_index[0], "tvg-logo"]
+            # if df.at[target_index[0], "tvg-logo"]:
+            #    channellogo = df.at[target_index[0], "tvg-logo"]
 
             channelepgurl = df.at[target_index[0], "tvg-url"]
             channelgroup = df.at[target_index[0], "group-title"]

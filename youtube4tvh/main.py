@@ -1,10 +1,25 @@
-from lib.m3uhandler import M3uHandler
-from lib.youtubehandler import YoutubeHandler
+#!/usr/bin/python3
+# Purpose:      Save a Youtube live-stream to a M3U playlist
+# Author:       cgomesu
+# Date:         April 23rd, 2020
+# Version:      0.01
+# Disclaimer:   Use at your own discretion.
+#               Be mindful of the API daily quota. You'll reach it pretty quickly if the
+#               channel ID and logo URL are not provided.
+#               The author does not provide any sort warranty whatsoever.
+
+from youtube4tvh.lib.m3uhandler import M3uHandler
+from youtube4tvh.lib.youtubehandler import YoutubeHandler
 from argparse import ArgumentParser
 
 
 def cli():
     ap = ArgumentParser()
+    ap.add_argument("--mode",
+                    type=str,
+                    default="add",
+                    required=False,
+                    help="mode of execution. add or update.")
     ap.add_argument("--apikey",
                     type=str,
                     required=True,
@@ -55,13 +70,13 @@ def cli():
                     help="the absolute /path/to/bash executable. default is /bin/bash.")
     ap.add_argument("--pathsh",
                     required=False,
-                    default="/opt/youtubelivem3u/streamlink.sh",
+                    default="/opt/youtube4tvh/streamlink.sh",
                     type=str,
-                    help="the absolute /path/to/streamlink.sh. default is /opt/youtubelivem3u/streamlink.sh.")
+                    help="the absolute /path/to/streamlink.sh. default is /opt/youtube4tvh/streamlink.sh.")
     return vars(ap.parse_args())
 
 
-def main():
+def add_stream():
     # YOUTUBE API HANDLER
     youtube = YoutubeHandler(args_cli["apiurl"],
                              args_cli["apikey"],
@@ -143,6 +158,14 @@ def main():
     exit()
 
 
+def update_stream():
+    # Update stream from a file
+    pass
+
+
 if __name__ == "__main__":
     args_cli = cli()
-    main()
+    if args_cli["mode"] == "add":
+        add_stream()
+    elif args_cli["mode"] == "update":
+        update_stream()
