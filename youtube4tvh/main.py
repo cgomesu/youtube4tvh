@@ -8,8 +8,8 @@
 #               channel ID and logo URL are not provided.
 #               The author does not provide any sort warranty whatsoever.
 
-from youtube4tvh.lib.m3uhandler import M3uHandler
-from youtube4tvh.lib.youtubehandler import YoutubeHandler
+from lib.m3uhandler import M3uHandler
+from lib.youtubehandler import YoutubeHandler
 from argparse import ArgumentParser
 
 
