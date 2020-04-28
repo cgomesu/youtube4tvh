@@ -1,13 +1,21 @@
+#!/usr/bin/python3
+# Purpose:      Save a Youtube live-stream to a M3U playlist
+# Author:       cgomesu
+# Date:         April 28th, 2020
+# Version:      0.01
+# Disclaimer:   Use at your own discretion.
+#               Be mindful of the API daily quota. You'll reach it pretty quickly if the
+#               channel ID and logo URL are not provided.
+#               The author does not provide any sort warranty whatsoever.
+
 import re
 import pandas
 
 
 class M3uHandler:
-    def __init__(self, inputm3u, outputm3u, inputcsv, outputcsv):
+    def __init__(self, inputm3u, outputm3u):
         self.inputm3u = inputm3u
         self.outputm3u = outputm3u
-        self.inputcsv = inputcsv
-        self.outputcsv = outputcsv
 
     def append(self,
                dataframe,
@@ -56,19 +64,17 @@ class M3uHandler:
             print("There was an error APPENDING data to data frame. Error: {}".format(err))
             return None
 
-    def export_csv(self, dataframe):
-        # Consolidate a m3u data frame to a .csv file
-        try:
-            dataframe.to_csv(self.outputcsv, index=False)
-            print("Data frame was successfully exported to {}!".format(self.outputcsv))
-        except Exception as err:
-            print("There was an error exporting the data frame to a csv file. Error: {}".format(err))
-
-    # TODO: Finish this up
-    def lookup(self, dataframe):
+    def lookup_names(self, dataframe):
         # Extract data from each channel
-        for i in range(dataframe.shape[0]):
-            print(dataframe.at[i, "tvg-name"])
+        channel_list = []
+        try:
+            for i in range(dataframe.shape[0]):
+                channel_list.append(dataframe.at[i, "tvg-name"])
+            print("Channel names successfully extracted. Channels: {}".format(channel_list))
+            return channel_list
+        except Exception as err:
+            print("There was an error looking for channel names. Error: {}".format(err))
+            return None
 
     def parse(self):
         # Define regex dictionary for iptv m3u files

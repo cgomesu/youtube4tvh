@@ -1,3 +1,13 @@
+#!/usr/bin/python3
+# Purpose:      Save a Youtube live-stream to a M3U playlist
+# Author:       cgomesu
+# Date:         April 28th, 2020
+# Version:      0.01
+# Disclaimer:   Use at your own discretion.
+#               Be mindful of the API daily quota. You'll reach it pretty quickly if the
+#               channel ID and logo URL are not provided.
+#               The author does not provide any sort warranty whatsoever.
+
 import requests
 
 
@@ -6,13 +16,11 @@ class YoutubeHandler:
                  apiurl,
                  apikey,
                  channelid,
-                 channelurl,
                  channelname,
                  channellogo):
         self.apiurl = apiurl
         self.apikey = apikey
         self.channelid = channelid
-        self.channelurl = channelurl
         self.channelname = channelname
         self.channellogo = channellogo
 
@@ -93,15 +101,6 @@ class YoutubeHandler:
                 "region": response.json()["regionCode"].encode("utf-8")
             }
             print("Done extracting info from the live-stream!")
-            print("- Title: {} \n"
-                  "- Description: {} \n"
-                  "- URL: {} \n"
-                  "- Region: {} \n"
-                  "- Published at: {}".format(video["title"],
-                                              video["description"],
-                                              video["url"],
-                                              video["region"],
-                                              video["date"]))
             return video
         except Exception as err:
             print("There was an error while trying to retrieve the videoId from the live-stream: {}".format(err))
