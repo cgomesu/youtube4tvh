@@ -158,13 +158,13 @@ def update_stream():
         # Unable to parse or empty file
         print("[INFO] The data frame is empty. Unable to continue in update mode. Bye!")
         exit()
-    channelnames = m3u.lookup_names(m3u_df)
-    if channelnames is None:
+    names = m3u.extract_column(m3u_df, "channel-name")
+    if names is None:
         print("[INFO] The list of channels is empty. Unable to continue in update mode. Bye!")
         exit()
-    for channel in channelnames:
+    for channel in names:
         print("[INFO] Updating channel: {}...".format(channel))
-        args_cli["channelname"] = channel
+        args_cli["channelname"], args_cli["channelid"], args_cli["channellogo"] = channel, "", ""
         add_stream()
 
 

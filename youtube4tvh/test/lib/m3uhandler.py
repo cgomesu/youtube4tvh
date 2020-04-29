@@ -63,16 +63,19 @@ class M3uHandler:
             print("There was an error APPENDING data to data frame. Error: {}".format(err))
             return None
 
-    def lookup_names(self, dataframe):
-        # Extract data from each channel
-        channel_list = []
+    def extract_column(self, dataframe, column_name):
+        # Extract content from a data frame column that matches the column_name
         try:
-            for i in range(dataframe.shape[0]):
-                channel_list.append(dataframe.at[i, "tvg-name"])
-            print("Channel names successfully extracted. Channels: {}".format(channel_list))
-            return channel_list
+            for name, content in dataframe.iteritems():
+                if name == column_name:
+                    # Save match to a list
+                    content_list = content.values.tolist()
+                    break
+            return content_list
         except Exception as err:
-            print("There was an error looking for channel names. Error: {}".format(err))
+            print("There was an error looking for the column \"{}\" in {}. Error: {}".format(column_name,
+                                                                                             dataframe,
+                                                                                             err))
             return None
 
     def parse(self):
@@ -241,25 +244,17 @@ class M3uHandler:
                pathsh,
                url):
         # Search and update a channel's info in the data frame
-        df = dataframe
         try:
             # Find index that contains the channel ID under tvg-id
-            target_index = df.loc[df["tvg-id"] == channelid].index
-
+            target_index = dataframe.loc[dataframe["tvg-id"] == channelid].index
             # Do not override existing info from the m3u file, except for the stream url
-            if df.at[target_index[0], "tvg-name"]:
-                channelname = df.at[target_index[0], "tvg-name"]
-
-            channellang = df.at[target_index[0], "tvg-language"]
-
-            if df.at[target_index[0], "tvg-country"]:
-                channelcountry = df.at[target_index[0], "tvg-country"]
-
-            # if df.at[target_index[0], "tvg-logo"]:
-            #    channellogo = df.at[target_index[0], "tvg-logo"]
-
-            channelepgurl = df.at[target_index[0], "tvg-url"]
-            channelgroup = df.at[target_index[0], "group-title"]
+            if dataframe.at[target_index[0], "tvg-name"]:
+                channelname = dataframe.at[target_index[0], "tvg-name"]
+            if dataframe.at[target_index[0], "tvg-country"]:
+                channelcountry = dataframe.at[target_index[0], "tvg-country"]
+            channellang = dataframe.at[target_index[0], "tvg-language"]
+            channelepgurl = dataframe.at[target_index[0], "tvg-url"]
+            channelgroup = dataframe.at[target_index[0], "group-title"]
 
             # Update individual cells from that row
             channelcontent = "#EXTINF:-1 " \
@@ -295,37 +290,37 @@ class M3uHandler:
                 "group-title": channelgroup,
                 "stream-url": "pipe://{} {} {}".format(pathbash, pathsh, url)
             }
-            df.at[target_index[0], "tvg-name"] = data["channel-name"]
-            df.at[target_index[0], "tvg-language"] = data["tvg-language"]
-            df.at[target_index[0], "tvg-country"] = data["tvg-country"]
-            df.at[target_index[0], "tvg-logo"] = data["tvg-logo"]
-            df.at[target_index[0], "tvg-url"] = data["tvg-url"]
-            df.at[target_index[0], "group-title"] = data["group-title"]
-            df.at[target_index[0], "stream-url"] = data["stream-url"]
+            dataframe.at[target_index[0], "tvg-name"] = data["channel-name"]
+            dataframe.at[target_index[0], "tvg-language"] = data["tvg-language"]
+            dataframe.at[target_index[0], "tvg-country"] = data["tvg-country"]
+            dataframe.at[target_index[0], "tvg-logo"] = data["tvg-logo"]
+            dataframe.at[target_index[0], "tvg-url"] = data["tvg-url"]
+            dataframe.at[target_index[0], "group-title"] = data["group-title"]
+            dataframe.at[target_index[0], "stream-url"] = data["stream-url"]
             boolean = True
-            return df, boolean
+            return dataframe, boolean
         except Exception as err:
             print("There was an error UPDATING the data frame. Error: {}".format(err))
             boolean = False
-            return df, boolean
+            return dataframe, boolean
 
     def write(self, dataframe):
         # Consolidate a m3u data frame to a .m3u file
         try:
             with open(self.outputm3u, "w") as f:
                 f.write("#EXTM3U\n")
-                for row in range(dataframe.shape[0]):
+                for row in dataframe.itertuples(index=False):
                     channel_data = {
-                        'channel-duration': dataframe.ix[row, "channel-duration"],
-                        'tvg-id': dataframe.ix[row, "tvg-id"],
-                        'tvg-name': dataframe.ix[row, "tvg-name"],
-                        'tvg-language': dataframe.ix[row, "tvg-language"],
-                        'tvg-country': dataframe.ix[row, "tvg-country"],
-                        'tvg-logo': dataframe.ix[row, "tvg-logo"],
-                        'tvg-url': dataframe.ix[row, "tvg-url"],
-                        'group-title': dataframe.ix[row, "group-title"],
-                        'channel-name': dataframe.ix[row, "channel-name"],
-                        'stream-url': dataframe.ix[row, "stream-url"]
+                        'channel-duration': row[dataframe.columns.get_loc("channel-duration")],
+                        'tvg-id': row[dataframe.columns.get_loc("tvg-id")],
+                        'tvg-name': row[dataframe.columns.get_loc("tvg-name")],
+                        'tvg-language': row[dataframe.columns.get_loc("tvg-language")],
+                        'tvg-country': row[dataframe.columns.get_loc("tvg-country")],
+                        'tvg-logo': row[dataframe.columns.get_loc("tvg-logo")],
+                        'tvg-url': row[dataframe.columns.get_loc("tvg-url")],
+                        'group-title': row[dataframe.columns.get_loc("group-title")],
+                        'channel-name': row[dataframe.columns.get_loc("channel-name")],
+                        'stream-url': row[dataframe.columns.get_loc("stream-url")]
                     }
                     str_channel_data = str("#EXTINF:{} "
                                            "tvg-id=\"{}\" "
