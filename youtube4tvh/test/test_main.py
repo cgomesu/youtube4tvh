@@ -75,70 +75,62 @@ def add_stream():
                              args_cli["channelid"],
                              args_cli["channelname"],
                              args_cli["channellogo"])
-    # Validate api key
-    print("[INFO] Validating the Youtube API key...")
-    if not youtube.validate_api():
-        exit()
-    # Find channel id
-    if not args_cli["channelid"]:
-        print("[INFO] Retrieving the channel ID using the channel NAME provided...")
-        args_cli["channelid"] = youtube.find_id()
-    # Find channel logo
-    if not args_cli["channellogo"]:
-        print("[INFO] Retrieving the URL of the channel's default logo...")
-        args_cli["channellogo"] = youtube.find_logo()
+    # Extract channel info
+    if not args_cli["channelid"] or args_cli["channellogo"]:
+        print("[INFO] Retrieving channel info using the NAME provided...")
+        args_cli["channelid"], args_cli["channellogo"] = youtube.find_chinfo()
     print("[INFO] Retrieving info from the channel's live-stream...")
     # Find info from the channel's live-stream
     stream = youtube.find_stream()
-
-    # M3U HANDLER
-    m3u = M3uHandler(args_cli["inputm3u"],
-                     args_cli["outputm3u"])
-    m3u_parameters = {
-        "channelid": args_cli["channelid"],
-        "channelname": args_cli["channelname"],
-        "channelcountry": stream["region"],
-        "channellogo": args_cli["channellogo"],
-        "pathbash": args_cli["pathbash"],
-        "pathsh": args_cli["pathsh"],
-        "url": stream["url"]
-    }
-    # Parse existing input m3u file
-    if args_cli["inputm3u"]:
-        print("[INFO] User provided an input M3U playlist at {}.  "
-              "Will try to parse it and create a data frame...".format(args_cli["inputm3u"]))
-        m3u_df = m3u.parse()
-        if m3u_df is None:
-            print("[INFO] Generating an empty data frame...")
+    if stream is not None:
+        # M3U HANDLER
+        m3u = M3uHandler(args_cli["inputm3u"],
+                         args_cli["outputm3u"])
+        m3u_parameters = {
+            "channelid": args_cli["channelid"],
+            "channelname": args_cli["channelname"],
+            "channelcountry": stream["region"],
+            "channellogo": args_cli["channellogo"],
+            "pathbash": args_cli["pathbash"],
+            "pathsh": args_cli["pathsh"],
+            "url": stream["url"]
+        }
+        # Parse existing input m3u file
+        if args_cli["inputm3u"]:
+            print("[INFO] User provided an input M3U playlist at {}.  "
+                  "Will try to parse it and create a data frame...".format(args_cli["inputm3u"]))
+            m3u_df = m3u.parse()
+            if m3u_df is None:
+                print("[INFO] Generating an empty data frame...")
+                m3u_df = m3u.template()
+        # Else, create a template data frame
+        elif not args_cli["inputm3u"]:
+            print("[INFO] Did not find an input M3U playlist.  "
+                  "Generating an empty data frame...")
             m3u_df = m3u.template()
-    # Else, create a template data frame
-    elif not args_cli["inputm3u"]:
-        print("[INFO] Did not find an input M3U playlist.  "
-              "Generating an empty data frame...")
-        m3u_df = m3u.template()
-    # Append or update data frame
-    if m3u_df.empty:
-        print("[INFO] Appending stream info to data frame...")
-        m3u_df = m3u.append(m3u_df, **m3u_parameters)
-    elif not m3u_df.empty:
-        # Check if the channel id exists in the data frame
-        chboolean = m3u.search(m3u_df, "tvg-id", args_cli["channelid"])
-        if chboolean:
-            print("[INFO] Found the same channel on {}. "
-                  "Updating its url in the data frame...".format(args_cli["inputm3u"], args_cli["outputm3u"]))
-            m3u_df, upboolean = m3u.update(m3u_df, **m3u_parameters)
-            # Check if update() returned None owing to an error while updating channel data
-            if not upboolean:
-                print("[INFO] It seems update() failed. "
-                      "Will try to append the channel info to {} instead...".format(args_cli["outputm3u"]))
-                m3u_df = m3u.append(m3u_df, **m3u_parameters)
-        elif not chboolean:
-            print("[INFO] Did not find the same channel on {}. "
-                  "Will append the channel info to {}...".format(args_cli["inputm3u"], args_cli["outputm3u"]))
+        # Append or update data frame
+        if m3u_df.empty:
+            print("[INFO] Appending stream info to data frame...")
             m3u_df = m3u.append(m3u_df, **m3u_parameters)
-    # Consolidate m3u data frame to a .m3u file
-    print("[INFO] Writing data frame to .m3u file...")
-    m3u.write(m3u_df)
+        elif not m3u_df.empty:
+            # Check if the channel id exists in the data frame
+            chbool = m3u.search(m3u_df, "tvg-id", args_cli["channelid"])
+            if chbool:
+                print("[INFO] Found the same channel on {}. "
+                      "Updating its url in the data frame...".format(args_cli["inputm3u"], args_cli["outputm3u"]))
+                m3u_df, upboolean = m3u.update(m3u_df, **m3u_parameters)
+                # Check if update() returned None owing to an error while updating channel data
+                if not upboolean:
+                    print("[INFO] It seems update() failed. "
+                          "Will try to append the channel info to {} instead...".format(args_cli["outputm3u"]))
+                    m3u_df = m3u.append(m3u_df, **m3u_parameters)
+            elif not chbool:
+                print("[INFO] Did not find the same channel on {}. "
+                      "Will append the channel info to {}...".format(args_cli["inputm3u"], args_cli["outputm3u"]))
+                m3u_df = m3u.append(m3u_df, **m3u_parameters)
+        # Consolidate m3u data frame to a .m3u file
+        print("[INFO] Writing data frame to .m3u file...")
+        m3u.write(m3u_df)
     print("[INFO] Done!")
 
 
@@ -171,10 +163,10 @@ def update_stream():
 def main():
     if args_cli["mode"] == "update":
         update_stream()
-        print("[INFO] We're all done here.  Bye!")
+        print("[INFO] We're all done here. Bye!")
         exit()
     add_stream()
-    print("[INFO] We're all done here.  Bye!")
+    print("[INFO] We're all done here. Bye!")
     exit()
 
 

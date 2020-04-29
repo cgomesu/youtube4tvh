@@ -66,6 +66,7 @@ class M3uHandler:
     def extract_column(self, dataframe, column_name):
         # Extract content from a data frame column that matches the column_name
         try:
+            content_list = []
             for name, content in dataframe.iteritems():
                 if name == column_name:
                     # Save match to a list
@@ -73,9 +74,7 @@ class M3uHandler:
                     break
             return content_list
         except Exception as err:
-            print("There was an error looking for the column \"{}\" in {}. Error: {}".format(column_name,
-                                                                                             dataframe,
-                                                                                             err))
+            print("There was an error looking for the column \"{}\". Error: {}".format(column_name, err))
             return None
 
     def parse(self):
@@ -206,10 +205,10 @@ class M3uHandler:
     def search(self, dataframe, column, term):
         # Return True if there's at least one cell containing the term in the data frame
         try:
-            searchboolean = dataframe[column].str.contains(term).any()
-            if searchboolean:
+            sbool = dataframe[column].str.contains(term).any()
+            if sbool:
                 return True
-            elif not searchboolean:
+            elif not sbool:
                 return False
         except Exception as err:
             print("There was an error searching for the term {} on column {}. Error: {}".format(term, column, err))
@@ -247,6 +246,7 @@ class M3uHandler:
         try:
             # Find index that contains the channel ID under tvg-id
             target_index = dataframe.loc[dataframe["tvg-id"] == channelid].index
+
             # Do not override existing info from the m3u file, except for the stream url
             if dataframe.at[target_index[0], "tvg-name"]:
                 channelname = dataframe.at[target_index[0], "tvg-name"]
@@ -345,5 +345,3 @@ class M3uHandler:
                 print("Data frame was successfully exported to {}!".format(self.outputm3u))
         except Exception as err:
             print("There was an error writing the data frame to the m3u file. Error: {}".format(err))
-
-
