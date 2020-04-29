@@ -43,6 +43,8 @@ class YoutubeHandler:
                 if reason == "keyInvalid":
                     print("The Youtube API key is not valid. "
                           "Review your credentials. Key provided: {}".format(self.apikey))
+                    # Exit program if the API key is invalid because it's pointless to continue
+                    exit()
                 print("Unable to use the Youtube API key. Reason: {}".format(reason))
                 raise Exception
             # Get channelId from json
