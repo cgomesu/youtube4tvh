@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 # Purpose:      Save a Youtube live-stream to a M3U playlist
 # Author:       cgomesu
-# Date:         April 28th, 2020
-# Version:      0.01
+# Date:         April 29th, 2020
 # Disclaimer:   Use at your own discretion.
 #               Be mindful of the API daily quota. You'll reach it pretty quickly if the
 #               channel ID and logo URL are not provided.
@@ -49,9 +48,9 @@ def cli():
                     help="the /path/to/input.m3u. used to import data from existing m3u.")
     ap.add_argument("--outputm3u",
                     required=False,
-                    default="output.m3u",
+                    default="input.m3u",
                     type=str,
-                    help="the /path/to/output.m3u. default is output.m3u.")
+                    help="the /path/to/input.m3u. default is input.m3u.")
     ap.add_argument("--pathbash",
                     required=False,
                     default="/bin/bash",
@@ -158,7 +157,7 @@ def update_stream():
     if m3u_df is None:
         # Unable to parse or empty file
         print("[INFO] The data frame is empty. Unable to continue in update mode. Bye!")
-    # TODO: Need to be informed by the data frame
+        exit()
     channelnames = m3u.lookup_names(m3u_df)
     if channelnames is None:
         print("[INFO] The list of channels is empty. Unable to continue in update mode. Bye!")

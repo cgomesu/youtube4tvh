@@ -1,14 +1,79 @@
+#!/usr/bin/python3
+# Purpose:      Save a Youtube live-stream to a M3U playlist
+# Author:       cgomesu
+# Date:         April 29th, 2020
+# Disclaimer:   Use at your own discretion.
+#               Be mindful of the API daily quota. You'll reach it pretty quickly if the
+#               channel ID and logo URL are not provided.
+#               The author does not provide any sort warranty whatsoever.
+
 import re
 import pandas
 
 
 class M3uHandler:
-
-    def __init__(self, inputm3u, outputm3u, inputcsv, outputcsv):
+    def __init__(self, inputm3u, outputm3u):
         self.inputm3u = inputm3u
         self.outputm3u = outputm3u
-        self.inputcsv = inputcsv
-        self.outputcsv = outputcsv
+
+    def append(self,
+               dataframe,
+               channelid,
+               channelname,
+               channelcountry,
+               channellogo,
+               pathbash,
+               pathsh,
+               url):
+        # Append stream data to data frame
+        channelcontent = "#EXTINF:-1 " \
+                         "tvg-id=\"{}\" " \
+                         "tvg-name=\"{}\" " \
+                         "tvg-language=\"\" " \
+                         "tvg-country=\"{}\" " \
+                         "tvg-logo=\"{}\" " \
+                         "tvg-url=\"\" " \
+                         "group-title=\"\"," \
+                         "{}\n" \
+                         "pipe://{} {} {}".format(channelid,
+                                                  channelname,
+                                                  channelcountry,
+                                                  channellogo,
+                                                  channelname,
+                                                  pathbash,
+                                                  pathsh,
+                                                  url)
+        data = {
+            "channel-content": channelcontent,
+            "channel-name": channelname,
+            "channel-duration": "-1",
+            "tvg-id": channelid,
+            "tvg-name": channelname,
+            "tvg-language": "",
+            "tvg-country": channelcountry,
+            "tvg-logo": channellogo,
+            "tvg-url": "",
+            "group-title": "",
+            "stream-url": "pipe://{} {} {}".format(pathbash, pathsh, url)
+        }
+        try:
+            df = dataframe.append(data, ignore_index=True)
+            return df
+        except Exception as err:
+            print("There was an error APPENDING data to data frame. Error: {}".format(err))
+            return None
+
+    def lookup_names(self, dataframe):
+        # Extract data from each channel
+        channel_list = []
+        try:
+            for i in range(dataframe.shape[0]):
+                channel_list.append(dataframe.at[i, "tvg-name"])
+            print("Channel names successfully extracted. Channels: {}".format(channel_list))
+            return channel_list
+        except Exception as err:
+            print("There was an error looking for channel names. Error: {}".format(err))
+            return None
 
     def parse(self):
         # Define regex dictionary for iptv m3u files
@@ -71,7 +136,6 @@ class M3uHandler:
                           "bad header(s) to allow the program to parse your m3u file.".format(self.inputm3u))
                     raise Exception
                 print("Did not find bad headers in the m3u file {}.".format(self.inputm3u))
-                pass
         except Exception as err:
             print("There was an error VALIDATING the m3u file: {}".format(err))
             print("Will continue but data frame is None.")
@@ -135,61 +199,6 @@ class M3uHandler:
             print("There was an error parsing the m3u file: {}".format(err))
             print("Will continue but data frame is None.")
             return None
-
-    def append(self,
-               dataframe,
-               channelid,
-               channelname,
-               channelcountry,
-               channellogo,
-               pathbash,
-               pathsh,
-               url):
-        # Append stream data to data frame
-        channelcontent = "#EXTINF:-1 " \
-                         "tvg-id=\"{}\" " \
-                         "tvg-name=\"{}\" " \
-                         "tvg-language=\"\" " \
-                         "tvg-country=\"{}\" " \
-                         "tvg-logo=\"{}\" " \
-                         "tvg-url=\"\" " \
-                         "group-title=\"\"," \
-                         "{}\n" \
-                         "pipe://{} {} {}".format(channelid,
-                                                  channelname,
-                                                  channelcountry,
-                                                  channellogo,
-                                                  channelname,
-                                                  pathbash,
-                                                  pathsh,
-                                                  url)
-        data = {
-            "channel-content": channelcontent,
-            "channel-name": channelname,
-            "channel-duration": "-1",
-            "tvg-id": channelid,
-            "tvg-name": channelname,
-            "tvg-language": "",
-            "tvg-country": channelcountry,
-            "tvg-logo": channellogo,
-            "tvg-url": "",
-            "group-title": "",
-            "stream-url": "pipe://{} {} {}".format(pathbash, pathsh, url)
-        }
-        try:
-            df = dataframe.append(data, ignore_index=True)
-            return df
-        except Exception as err:
-            print("There was an error APPENDING data to data frame. Error: {}".format(err))
-            return None
-
-    def export_csv(self, dataframe):
-        # Consolidate a m3u data frame to a .csv file
-        try:
-            dataframe.to_csv(self.outputcsv, index=False)
-            print("Data frame was successfully exported to {}!".format(self.outputcsv))
-        except Exception as err:
-            print("There was an error exporting the data frame to a csv file. Error: {}".format(err))
 
     def search(self, dataframe, column, term):
         # Return True if there's at least one cell containing the term in the data frame

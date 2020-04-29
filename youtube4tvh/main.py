@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 # Purpose:      Save a Youtube live-stream to a M3U playlist
 # Author:       cgomesu
-# Date:         April 23rd, 2020
-# Version:      0.01
+# Date:         April 29th, 2020
 # Disclaimer:   Use at your own discretion.
 #               Be mindful of the API daily quota. You'll reach it pretty quickly if the
 #               channel ID and logo URL are not provided.
@@ -16,10 +15,12 @@ from argparse import ArgumentParser
 def cli():
     ap = ArgumentParser()
     ap.add_argument("--mode",
+                    choices=['add', 'update'],
                     type=str,
-                    default="add",
+                    default='add',
                     required=False,
-                    help="mode of execution. add or update.")
+                    help="mode of execution. choose add to add a single channel "
+                         "or update for multiple channels from an m3u file.")
     ap.add_argument("--apikey",
                     type=str,
                     required=True,
@@ -32,37 +33,24 @@ def cli():
     ap.add_argument("--channelid",
                     required=False,
                     type=str,
-                    help="ID of a channel with a live-stream.")
+                    help="for --mode=add. the ID of a channel with a live-stream.")
     ap.add_argument("--channellogo",
                     required=False,
                     type=str,
-                    help="URL of the channel's LOGO.")
+                    help="for --mode=add. the URL of the channel's LOGO.")
     ap.add_argument("--channelname",
-                    required=True,
-                    type=str,
-                    help="NAME of the channel with a live-stream.")
-    ap.add_argument("--channelurl",
                     required=False,
                     type=str,
-                    help="URL of a channel with a live-stream.")
+                    help="for --mode=add. the NAME of the channel with a live-stream.")
     ap.add_argument("--inputm3u",
                     required=False,
                     type=str,
                     help="the /path/to/input.m3u. used to import data from existing m3u.")
     ap.add_argument("--outputm3u",
                     required=False,
-                    default="output.m3u",
+                    default="input.m3u",
                     type=str,
-                    help="the /path/to/output.m3u. default is output.m3u.")
-    ap.add_argument("--inputcsv",
-                    required=False,
-                    type=str,
-                    help="the /path/to/input.csv.  used to import data from existing csv.")
-    ap.add_argument("--outputcsv",
-                    required=False,
-                    default="output.csv",
-                    type=str,
-                    help="the /path/to/output.csv. default is output.csv.")
+                    help="the /path/to/input.m3u. default is input.m3u.")
     ap.add_argument("--pathbash",
                     required=False,
                     default="/bin/bash",
@@ -77,11 +65,14 @@ def cli():
 
 
 def add_stream():
+    # Create or append a live-stream to an m3u file
+    if not args_cli["channelname"]:
+        print("[INFO] A channel name must be provided at the very least. See --help.  Bye!")
+        exit()
     # YOUTUBE API HANDLER
     youtube = YoutubeHandler(args_cli["apiurl"],
                              args_cli["apikey"],
                              args_cli["channelid"],
-                             args_cli["channelurl"],
                              args_cli["channelname"],
                              args_cli["channellogo"])
     # Validate api key
@@ -102,9 +93,7 @@ def add_stream():
 
     # M3U HANDLER
     m3u = M3uHandler(args_cli["inputm3u"],
-                     args_cli["outputm3u"],
-                     args_cli["inputcsv"],
-                     args_cli["outputcsv"])
+                     args_cli["outputm3u"])
     m3u_parameters = {
         "channelid": args_cli["channelid"],
         "channelname": args_cli["channelname"],
@@ -151,21 +140,44 @@ def add_stream():
     print("[INFO] Writing data frame to .m3u file...")
     m3u.write(m3u_df)
     print("[INFO] Done!")
-    print("[INFO] Writing data frame to .csv file...")
-    m3u.export_csv(m3u_df)
-    print("[INFO] Done!")
-    print("[INFO] We're all done here. Bye!")
-    exit()
 
 
 def update_stream():
     # Update stream from a file
-    pass
+    if not args_cli["inputm3u"]:
+        print("[INFO] An input m3u file is required to use this program in update mode. See --help.  Bye!")
+        exit()
+    # M3U HANDLER
+    m3u = M3uHandler(args_cli["inputm3u"],
+                     args_cli["outputm3u"])
+    # Parse user provided m3u file
+    print("[INFO] User provided an input M3U playlist at {}.  "
+          "Will try to parse it and create a data frame...".format(args_cli["inputm3u"]))
+    m3u_df = m3u.parse()
+    if m3u_df is None:
+        # Unable to parse or empty file
+        print("[INFO] The data frame is empty. Unable to continue in update mode. Bye!")
+        exit()
+    channelnames = m3u.lookup_names(m3u_df)
+    if channelnames is None:
+        print("[INFO] The list of channels is empty. Unable to continue in update mode. Bye!")
+        exit()
+    for channel in channelnames:
+        print("[INFO] Updating channel: {}...".format(channel))
+        args_cli["channelname"] = channel
+        add_stream()
+
+
+def main():
+    if args_cli["mode"] == "update":
+        update_stream()
+        print("[INFO] We're all done here.  Bye!")
+        exit()
+    add_stream()
+    print("[INFO] We're all done here.  Bye!")
+    exit()
 
 
 if __name__ == "__main__":
     args_cli = cli()
-    if args_cli["mode"] == "add":
-        add_stream()
-    elif args_cli["mode"] == "update":
-        update_stream()
+    main()
