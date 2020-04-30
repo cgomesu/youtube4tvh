@@ -1,10 +1,9 @@
 #!/usr/bin/python3
-# Purpose:      Save a Youtube live-stream to a M3U playlist
+# Purpose:      Save a Youtube live-stream to an M3U playlist
 # Author:       cgomesu
-# Date:         April 29th, 2020
+# Date:         April 30th, 2020
 # Disclaimer:   Use at your own discretion.
-#               Be mindful of the API daily quota. You'll reach it pretty quickly if the
-#               channel ID and logo URL are not provided.
+#               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
 
 from lib.m3uhandler import M3uHandler
@@ -19,48 +18,50 @@ def cli():
                     type=str,
                     default='add',
                     required=False,
-                    help="mode of execution. choose add to add a single channel "
-                         "or update for multiple channels from an m3u file.")
+                    help="mode of execution. choose add or update. "
+                         "mode=add will add a single channel to an m3u file (default). "
+                         "mode=update will update the URL of multiple channels from an m3u file.")
     ap.add_argument("--apikey",
                     type=str,
                     required=True,
-                    help="your API KEY to use the Youtube API.")
+                    help="your API KEY to use the Youtube API. "
+                         "see https://developers.google.com/youtube/v3/getting-started.")
     ap.add_argument("--apiurl",
                     type=str,
                     default="https://www.googleapis.com/youtube/v3/",
                     required=False,
-                    help="base URL of the Youtube API. default is the Youtube API v3.")
+                    help="base URL of the Youtube API. default uses the Youtube API v3.")
     ap.add_argument("--channelid",
                     required=False,
                     type=str,
-                    help="for --mode=add. the ID of a channel with a live-stream.")
+                    help="for --mode=add. the ID of a channel with a live-stream. "
+                         "if not provided, obtained from a channel name query.")
     ap.add_argument("--channellogo",
                     required=False,
                     type=str,
-                    help="for --mode=add. the URL of the channel's LOGO.")
+                    help="for --mode=add. the URL of the channel's LOGO. "
+                         "if the channel id is not provided, it will be obtained from a channel name query.")
     ap.add_argument("--channelname",
                     required=False,
                     type=str,
-                    help="for --mode=add. the NAME of the channel with a live-stream.")
+                    help="REQUIRED for --mode=add. the NAME of the channel with a live-stream.")
     ap.add_argument("--inputm3u",
                     required=False,
                     type=str,
-                    help="the /path/to/input.m3u. used to import data from existing m3u.")
+                    help="REQUIRED for --mode=update. the /path/to/input.m3u. "
+                         "used to import data from an existing m3u file.")
     ap.add_argument("--outputm3u",
                     required=False,
-                    default="input.m3u",
+                    default="output.m3u",
                     type=str,
-                    help="the /path/to/input.m3u. default is input.m3u.")
-    ap.add_argument("--pathbash",
+                    help="the /path/to/output.m3u. default is output.m3u.")
+    ap.add_argument("--pipecmd",
                     required=False,
-                    default="/bin/bash",
+                    default="pipe:///bin/bash /opt/youtube4tvh/streamlink.sh",
                     type=str,
-                    help="the absolute /path/to/bash executable. default is /bin/bash.")
-    ap.add_argument("--pathsh",
-                    required=False,
-                    default="/opt/youtube4tvh/streamlink.sh",
-                    type=str,
-                    help="the absolute /path/to/streamlink.sh. default is /opt/youtube4tvh/streamlink.sh.")
+                    help="the command to pipe data from streamlink to a player/server. "
+                         "for TVH, it is pipe:///path/to/bash /path/to/streamlink.sh, for example. "
+                         "default is \"pipe:///bin/bash /opt/youtube4tvh/streamlink.sh\", per tutorial.")
     return vars(ap.parse_args())
 
 
@@ -76,7 +77,7 @@ def add_stream():
                              args_cli["channelname"],
                              args_cli["channellogo"])
     # Extract channel info
-    if not args_cli["channelid"] or args_cli["channellogo"]:
+    if not args_cli["channelid"]:
         print("[INFO] Retrieving channel info using the NAME provided...")
         args_cli["channelid"], args_cli["channellogo"] = youtube.find_chinfo()
     print("[INFO] Retrieving info from the channel's live-stream...")
@@ -91,8 +92,7 @@ def add_stream():
             "channelname": args_cli["channelname"],
             "channelcountry": stream["region"],
             "channellogo": args_cli["channellogo"],
-            "pathbash": args_cli["pathbash"],
-            "pathsh": args_cli["pathsh"],
+            "pipecmd": args_cli["pipecmd"],
             "url": stream["url"]
         }
         # Parse existing input m3u file
