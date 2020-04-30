@@ -244,7 +244,7 @@ class M3uHandler:
             # Find index that contains the channel ID under tvg-id
             target_index = dataframe.loc[dataframe["tvg-id"] == channelid].index
 
-            # Do not override existing info from the m3u file, except for the stream url
+            # Do not overwrite existing info from the m3u file, except for the stream url
             if dataframe.at[target_index[0], "tvg-name"]:
                 channelname = dataframe.at[target_index[0], "tvg-name"]
             if dataframe.at[target_index[0], "tvg-country"]:
