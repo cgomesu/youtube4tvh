@@ -1,10 +1,9 @@
 #!/usr/bin/python3
-# Purpose:      Save a Youtube live-stream to a M3U playlist
+# Purpose:      Save a Youtube live-stream to an M3U playlist
 # Author:       cgomesu
-# Date:         April 29th, 2020
+# Date:         April 30th, 2020
 # Disclaimer:   Use at your own discretion.
-#               Be mindful of the API daily quota. You'll reach it pretty quickly if the
-#               channel ID and logo URL are not provided.
+#               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
 
 import re
@@ -22,8 +21,7 @@ class M3uHandler:
                channelname,
                channelcountry,
                channellogo,
-               pathbash,
-               pathsh,
+               pipecmd,
                url):
         # Append stream data to data frame
         channelcontent = "#EXTINF:-1 " \
@@ -35,13 +33,12 @@ class M3uHandler:
                          "tvg-url=\"\" " \
                          "group-title=\"\"," \
                          "{}\n" \
-                         "pipe://{} {} {}".format(channelid,
+                         "{} {}".format(channelid,
                                                   channelname,
                                                   channelcountry,
                                                   channellogo,
                                                   channelname,
-                                                  pathbash,
-                                                  pathsh,
+                                                  pipecmd,
                                                   url)
         data = {
             "channel-content": channelcontent,
@@ -54,7 +51,7 @@ class M3uHandler:
             "tvg-logo": channellogo,
             "tvg-url": "",
             "group-title": "",
-            "stream-url": "pipe://{} {} {}".format(pathbash, pathsh, url)
+            "stream-url": "{} {}".format(pipecmd, url)
         }
         try:
             df = dataframe.append(data, ignore_index=True)
@@ -239,8 +236,7 @@ class M3uHandler:
                channelname,
                channelcountry,
                channellogo,
-               pathbash,
-               pathsh,
+               pipecmd,
                url):
         # Search and update a channel's info in the data frame
         try:
@@ -266,7 +262,7 @@ class M3uHandler:
                              "tvg-url=\"{}\" " \
                              "group-title=\"{}\"," \
                              "{}\n" \
-                             "pipe://{} {} {}".format(channelid,
+                             "{} {}".format(channelid,
                                                       channelname,
                                                       channellang,
                                                       channelcountry,
@@ -274,8 +270,7 @@ class M3uHandler:
                                                       channelepgurl,
                                                       channelgroup,
                                                       channelname,
-                                                      pathbash,
-                                                      pathsh,
+                                                      pipecmd,
                                                       url)
             data = {
                 "channel-content": channelcontent,
@@ -288,7 +283,7 @@ class M3uHandler:
                 "tvg-logo": channellogo,
                 "tvg-url": channelepgurl,
                 "group-title": channelgroup,
-                "stream-url": "pipe://{} {} {}".format(pathbash, pathsh, url)
+                "stream-url": "{} {}".format(pipecmd, url)
             }
             dataframe.at[target_index[0], "tvg-name"] = data["channel-name"]
             dataframe.at[target_index[0], "tvg-language"] = data["tvg-language"]

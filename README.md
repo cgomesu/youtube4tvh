@@ -9,7 +9,7 @@ network with them, and each stream is piped into TVHeadend via a Streamlink
 In general, this program is well suited for a TVH server that has the following
 layout:
 
-![TVH layout](img/tvhlayout.png)
+![TVH layout](img/tvh_layout.jpg)
 
 That is, there's one or more client that accesses a single TVH server that reads 
 an m3u playlist (youtubelive.m3u) that contains one or more muxes from Youtube 
