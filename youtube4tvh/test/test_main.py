@@ -110,7 +110,7 @@ def add_stream():
             m3u_df = m3u.template()
         # Append or update data frame
         if m3u_df.empty:
-            print("[INFO] Appending stream info to data frame...")
+            print("[INFO] Appending stream info to the data frame...")
             m3u_df = m3u.append(m3u_df, **m3u_parameters)
         elif not m3u_df.empty:
             # Check if the channel id exists in the data frame
@@ -122,11 +122,11 @@ def add_stream():
                 # Check if update() returned None owing to an error while updating channel data
                 if not upboolean:
                     print("[INFO] It seems update() failed. "
-                          "Will try to append the channel info to data frame instead...")
+                          "Will try to append the stream info to the data frame instead...")
                     m3u_df = m3u.append(m3u_df, **m3u_parameters)
             elif not chbool:
                 print("[INFO] Did not find the same channel on {}. "
-                      "Will append the channel info to data frame...".format(args_cli["inputm3u"]))
+                      "Will append the stream info to the data frame...".format(args_cli["inputm3u"]))
                 m3u_df = m3u.append(m3u_df, **m3u_parameters)
         # Consolidate m3u data frame to a .m3u file
         print("[INFO] Writing data frame to .m3u file...")

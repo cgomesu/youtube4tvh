@@ -23,7 +23,7 @@ class M3uHandler:
                channellogo,
                pipecmd,
                url):
-        # Append stream data to data frame
+        # Append stream data to the data frame
         channelcontent = "#EXTINF:-1 " \
                          "tvg-id=\"{}\" " \
                          "tvg-name=\"{}\" " \
@@ -55,9 +55,10 @@ class M3uHandler:
         }
         try:
             df = dataframe.append(data, ignore_index=True)
+            print("Stream info successfully appended to the data frame!")
             return df
         except Exception as err:
-            print("There was an error APPENDING data to data frame. Error: {}".format(err))
+            print("There was an error APPENDING data to the data frame. Error: {}".format(err))
             return None
 
     def extract_column(self, dataframe, column_name):
