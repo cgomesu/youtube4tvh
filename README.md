@@ -1,7 +1,8 @@
 # Youtube 4 tvh
-Youtube4tvh is a non-interactive Python CLI program that uses Youtube API to 
+Youtube4tvh is a Python CLI program that uses Youtube API to 
 find live-streams and create (or update) m3u playlists. The m3u file 
-follows IPTV conventions that allow a TVHeadend (TVH) server to create an IPTV 
+follows IPTV conventions that allow a TVHeadend 
+(TVH; https://github.com/tvheadend/tvheadend) server to create an IPTV 
 network with them, and each stream is piped into TVHeadend via a Streamlink 
 (https://streamlink.github.io/) shell script.
 
@@ -19,7 +20,7 @@ network with them, and each stream is piped into TVHeadend via a Streamlink
 
 
 # Requirements
-- Python 2, 3, 3.5
+- Python 2, 3, or 3.5
 
 - Python packages: Pandas (pandas), RegEx (re), and Requests (requests) is all
 you need (see requirements.txt)
@@ -105,7 +106,7 @@ optional arguments:
 ```diff
 python main.py --apikey=YOURKEY --outputm3u=youtube.m3u --channelname="France 24 English"
 
-Output:
+# Output:
 [INFO] Retrieving channel info using the NAME provided...
 The channel ID is: UCQfwfsi5VrQ8yKZ-UWmAEFg
 The URL of the channel's logo is: https://yt3.ggpht.com/-Qc-MGBq90YE/AAAAAAAAAAI/AAAAAAAAAAA/AAmrwHX7No0/s88-c-k-no-mo-rj-c0xffffff/photo.jpg
@@ -145,7 +146,7 @@ Validating the m3u file...
 Did not find bad headers in the m3u file youtube.m3u.
 Parsing the m3u file...
 The m3u file was successfully parsed!
-[INFO] Did not find the same channel on youtube.m3u. Will append the channel info to youtube.m3u...
+[INFO] Did not find the same channel on youtube.m3u. Will append the channel info to data frame...
 [INFO] Writing data frame to .m3u file...
 Data frame was successfully exported to youtube.m3u!
 [INFO] Done!

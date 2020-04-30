@@ -13,14 +13,6 @@ from argparse import ArgumentParser
 
 def cli():
     ap = ArgumentParser()
-    ap.add_argument("--mode",
-                    choices=['add', 'update'],
-                    type=str,
-                    default='add',
-                    required=False,
-                    help="mode of execution. choose add or update. "
-                         "mode=add will add a single channel to an m3u file (default). "
-                         "mode=update will update the URL of multiple channels from an m3u file.")
     ap.add_argument("--apikey",
                     type=str,
                     required=True,
@@ -50,6 +42,14 @@ def cli():
                     type=str,
                     help="REQUIRED for --mode=update. the /path/to/input.m3u. "
                          "used to import data from an existing m3u file.")
+    ap.add_argument("--mode",
+                    choices=['add', 'update'],
+                    type=str,
+                    default='add',
+                    required=False,
+                    help="mode of execution. choose add or update. "
+                         "mode=add will add a single channel to an m3u file (default). "
+                         "mode=update will update the URL of multiple channels from an m3u file.")
     ap.add_argument("--outputm3u",
                     required=False,
                     default="output.m3u",
@@ -117,16 +117,16 @@ def add_stream():
             chbool = m3u.search(m3u_df, "tvg-id", args_cli["channelid"])
             if chbool:
                 print("[INFO] Found the same channel on {}. "
-                      "Updating its url in the data frame...".format(args_cli["inputm3u"], args_cli["outputm3u"]))
+                      "Updating its url in the data frame...".format(args_cli["inputm3u"]))
                 m3u_df, upboolean = m3u.update(m3u_df, **m3u_parameters)
                 # Check if update() returned None owing to an error while updating channel data
                 if not upboolean:
                     print("[INFO] It seems update() failed. "
-                          "Will try to append the channel info to {} instead...".format(args_cli["outputm3u"]))
+                          "Will try to append the channel info to data frame instead...")
                     m3u_df = m3u.append(m3u_df, **m3u_parameters)
             elif not chbool:
                 print("[INFO] Did not find the same channel on {}. "
-                      "Will append the channel info to {}...".format(args_cli["inputm3u"], args_cli["outputm3u"]))
+                      "Will append the channel info to data frame...".format(args_cli["inputm3u"]))
                 m3u_df = m3u.append(m3u_df, **m3u_parameters)
         # Consolidate m3u data frame to a .m3u file
         print("[INFO] Writing data frame to .m3u file...")

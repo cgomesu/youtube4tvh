@@ -13,14 +13,6 @@ from argparse import ArgumentParser
 
 def cli():
     ap = ArgumentParser()
-    ap.add_argument("--mode",
-                    choices=['add', 'update'],
-                    type=str,
-                    default='add',
-                    required=False,
-                    help="mode of execution. choose add or update. "
-                         "mode=add will add a single channel to an m3u file (default). "
-                         "mode=update will update the URL of multiple channels from an m3u file.")
     ap.add_argument("--apikey",
                     type=str,
                     required=True,
@@ -50,6 +42,14 @@ def cli():
                     type=str,
                     help="REQUIRED for --mode=update. the /path/to/input.m3u. "
                          "used to import data from an existing m3u file.")
+    ap.add_argument("--mode",
+                    choices=['add', 'update'],
+                    type=str,
+                    default='add',
+                    required=False,
+                    help="mode of execution. choose add or update. "
+                         "mode=add will add a single channel to an m3u file (default). "
+                         "mode=update will update the URL of multiple channels from an m3u file.")
     ap.add_argument("--outputm3u",
                     required=False,
                     default="output.m3u",
