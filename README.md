@@ -10,7 +10,7 @@ network with them, and each stream is piped into TVH via a Streamlink
 # Status
 ```diff
 - Working
-- Last checked on: April 30th 2020
+- Last checked on: May 1st 2020
 ```
 
 
@@ -65,15 +65,17 @@ cases. If you have a player that can read m3u files, you might want to change th
 ```diff
 usage: main.py [-h] [--mode {add,update}] --apikey APIKEY [--apiurl APIURL]
                [--channelid CHANNELID] [--channellogo CHANNELLOGO]
-               [--channelname CHANNELNAME] [--inputm3u INPUTM3U]
-               [--outputm3u OUTPUTM3U] [--pipecmd PIPECMD]
+               [--channelname CHANNELNAME] [--m3uinput M3UINPUT]
+               [--m3uoutput M3UOUTPUT] [--pipecmd PIPECMD]
+
+optional arguments:
+usage: main.py [-h] --apikey APIKEY [--apiurl APIURL] [--channelid CHANNELID]
+               [--channellogo CHANNELLOGO] [--channelname CHANNELNAME]
+               [--m3uinput M3UINPUT] [--m3uoutput M3UOUTPUT]
+               [--mode {add,update}] [--pipecmd PIPECMD]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --mode {add,update}   mode of execution. choose add or update. mode=add will
-                        add a single channel to an m3u file (default).
-                        mode=update will update the URL of multiple channels
-                        from an m3u file.
   --apikey APIKEY       your API KEY to use the Youtube API. see
                         https://developers.google.com/youtube/v3/getting-
                         started.
@@ -90,12 +92,16 @@ optional arguments:
   --channelname CHANNELNAME
                         REQUIRED for --mode=add. the NAME of the channel with
                         a live-stream.
-  --inputm3u INPUTM3U   REQUIRED for --mode=update. the /path/to/input.m3u.
+  --m3uinput M3UINPUT   REQUIRED for --mode=update. the /path/to/input.m3u.
                         used to import data from an existing m3u file.
-  --outputm3u OUTPUTM3U
+  --m3uoutput M3UOUTPUT
                         the /path/to/output.m3u. default is output.m3u.
-  --pipecmd PIPECMD     the command to pipe data from streamlink to a
-                        player/server. for TVH, it is pipe:///path/to/bash
+  --mode {add,update}   mode of execution. choose add or update. mode=add will
+                        add a single channel to an m3u file (default).
+                        mode=update will update the URL of multiple channels
+                        from an m3u file.
+  --pipecmd PIPECMD     the command to pipe data to a player/server. for TVH
+                        and streamlink, it is pipe:///path/to/bash
                         /path/to/streamlink.sh, for example. default is
                         "pipe:///bin/bash /opt/youtube4tvh/streamlink.sh", per
                         tutorial.
@@ -104,7 +110,7 @@ optional arguments:
 # Examples
 - Create a new youtube.m3u playlist with the live-stream from "France 24 English":
 ```diff
-python main.py --apikey=YOURKEY --outputm3u=youtube.m3u --channelname="France 24 English"
+python main.py --apikey=YOURKEY --m3uoutput=youtube.m3u --channelname="France 24 English"
 
 # Output:
 [INFO] Retrieving channel info using the NAME provided...
@@ -132,7 +138,7 @@ pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=
 
 - Append the live-stream from "ABC News AU" to youtube.m3u:
 ```diff
-python main.py --apikey=YOURKEY --inputm3u=youtube.m3u --outputm3u=youtube.m3u --channelname="ABC News AU"
+python main.py --apikey=YOURKEY --m3uinput=youtube.m3u --m3uoutput=youtube.m3u --channelname="ABC News AU"
 
 # Output:
 [INFO] Retrieving channel info using the NAME provided...
@@ -165,7 +171,7 @@ pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=
 
 - Update all URLS from the youtube.m3u
 ```diff
-python main.py --apikey=YOURKEY --inputm3u=youtube.m3u --outputm3u=youtube.m3u --mode=update
+python main.py --apikey=YOURKEY --m3uinput=youtube.m3u --m3uoutput=youtube.m3u --mode=update
 
 # Output:
 [INFO] User provided an input M3U playlist at youtube.m3u.  Will try to parse it and create a data frame...
@@ -214,6 +220,6 @@ Data frame was successfully exported to youtube.m3u!
 crontab -e
 # Go to the end of the file and add the following,
 # changing /path/to to your absolute path:
-0 6 * * * /path/to/python /path/to/main.py --apikey=YOURKEY --inputm3u=/path/to/youtube.m3u --outputm3u=/path/to/youtube.m3u --mode=update
+0 6 * * * /path/to/python /path/to/main.py --apikey=YOURKEY --m3uinput=/path/to/youtube.m3u --m3uoutput=/path/to/youtube.m3u --mode=update
 # Save and exit (ctrl+x)
 ```

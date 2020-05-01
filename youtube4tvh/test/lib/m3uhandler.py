@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Purpose:      Save a Youtube live-stream to an M3U playlist
 # Author:       cgomesu
-# Date:         April 30th, 2020
+# Date:         May 1st, 2020
 # Disclaimer:   Use at your own discretion.
 #               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
