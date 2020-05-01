@@ -3,7 +3,7 @@ Youtube4tvh is a Python CLI program that uses Youtube API to
 find live-streams and create (or update) m3u playlists. The m3u file 
 follows IPTV conventions that allow a TVHeadend 
 (TVH; https://github.com/tvheadend/tvheadend) server to create an IPTV 
-network with them, and each stream is piped into TVHeadend via a Streamlink 
+network with them, and each stream is piped into TVH via a Streamlink 
 (https://streamlink.github.io/) shell script.
 
 
@@ -20,7 +20,7 @@ network with them, and each stream is piped into TVHeadend via a Streamlink
 
 
 # Requirements
-- Python 2, 3, or 3.5
+- Python 2.7 or higher
 
 - Python packages: Pandas (pandas), RegEx (re), and Requests (requests) is all
 you need (see requirements.txt)

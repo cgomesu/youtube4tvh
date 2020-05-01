@@ -11,9 +11,9 @@ import pandas
 
 
 class M3uHandler:
-    def __init__(self, inputm3u, outputm3u):
-        self.inputm3u = inputm3u
-        self.outputm3u = outputm3u
+    def __init__(self, m3uinput, m3uoutput):
+        self.m3uinput = m3uinput
+        self.m3uoutput = m3uoutput
 
     def append(self,
                dataframe,
@@ -129,13 +129,13 @@ class M3uHandler:
         }
         try:
             print("Validating the m3u file...")
-            with open(self.inputm3u, 'r') as f:
+            with open(self.m3uinput, 'r') as f:
                 if rx_dict['bad_header'].search(f.read()) is not None:
                     print("The PARSER is unable to VALIDATE the m3u file {} because it has \n"
                           "at least one #HEADER different than #EXTM3U or #EXTINF. Remove the \n"
-                          "bad header(s) to allow the program to parse your m3u file.".format(self.inputm3u))
+                          "bad header(s) to allow the program to parse your m3u file.".format(self.m3uinput))
                     raise Exception
-                print("Did not find bad headers in the m3u file {}.".format(self.inputm3u))
+                print("Did not find bad headers in the m3u file {}.".format(self.m3uinput))
         except Exception as err:
             print("There was an error VALIDATING the m3u file: {}".format(err))
             print("Will continue but data frame is None.")
@@ -143,7 +143,7 @@ class M3uHandler:
         # Writes m3u file to a data frame
         try:
             print("Parsing the m3u file...")
-            with open(self.inputm3u, 'r') as f:
+            with open(self.m3uinput, 'r') as f:
                 parsed_data = (
                     (channel_content.group('channel_content'),
                      channel_name.group('channel_name'),
@@ -303,7 +303,7 @@ class M3uHandler:
     def write(self, dataframe):
         # Consolidate a m3u data frame to a .m3u file
         try:
-            with open(self.outputm3u, "w") as f:
+            with open(self.m3uoutput, "w") as f:
                 f.write("#EXTM3U\n")
                 for row in dataframe.itertuples(index=False):
                     channel_data = {
@@ -338,6 +338,6 @@ class M3uHandler:
                                                           channel_data["channel-name"],
                                                           channel_data["stream-url"])
                     f.write(str_channel_data)
-                print("Data frame was successfully exported to {}!".format(self.outputm3u))
+                print("Data frame was successfully exported to {}!".format(self.m3uoutput))
         except Exception as err:
             print("There was an error writing the data frame to the m3u file. Error: {}".format(err))
