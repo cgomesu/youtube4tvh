@@ -22,8 +22,8 @@ network with them, and each stream is piped into TVH via a Streamlink
 # Requirements
 - Python 2.7 or higher
 
-- Python packages: Pandas (pandas), RegEx (re), and Requests (requests) is all
-you need (see requirements.txt)
+- Python packages: Pandas (pandas) and Requests (requests) is all you will need to 
+install (see requirements.txt)
 
 - A valid Youtube API key (https://developers.google.com/youtube/v3/getting-started). 
 Be mindful of your request quota daily limits. You can check your API activity at 
@@ -57,6 +57,32 @@ cases. If you have a player that can read m3u files, you might want to change th
 
 
 # Installation
+- Linux
+```diff
+# Open a terminal window
+apt-get update
+apt-get install git python-pip
+cd /opt
+git clone https://github.com/cgomesu/youtube4tvh.git
+cd youtube4tvh
+# Via pip
+pip install .
+# Using setup.py directly
+python setup.py install
+# Test the program
+cd youtube4tvh
+python main.py --apikey=YOURKEY --channelname="DW News"
+# Now, there should be an output.m3u playlist on the same folder with the DW News channel live-stream.
+# If you run into permission issues, then 'sudo chown -R YOURUSER:sudo /opt/youtube4tvh', changing YOURSER for your sudo username.
+# If TVH is unable to run streamlink.sh, try 'sudo chmod 0777 /opt/youtube4tvh/streamlink.sh'.
+```
+
+- Mac
+```diff
+- Pending
+```
+
+- Windows
 ```diff
 - Pending
 ```
