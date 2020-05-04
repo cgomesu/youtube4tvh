@@ -1,10 +1,5 @@
 # Youtube 4 tvh
-Youtube4tvh is a Python CLI program that uses Youtube API to 
-find live-streams and create (or update) m3u playlists. The m3u file 
-follows IPTV conventions that allow a TVHeadend 
-(TVH; https://github.com/tvheadend/tvheadend) server to create an IPTV 
-network with them, and each stream is piped into TVH via a Streamlink 
-(https://streamlink.github.io/) shell script.
+Youtube4tvh is a Python CLI program that uses Youtube API to find live-streams and create (or update) m3u playlists for a TVHeadend server (TVH; https://github.com/tvheadend/tvheadend). The m3u file follows IPTV conventions that allow a TVH server to automatically create an IPTV network with them, and each stream is piped into TVH via a Streamlink (https://streamlink.github.io/) shell script.
 
 
 # Status
@@ -22,14 +17,9 @@ network with them, and each stream is piped into TVH via a Streamlink
 # Requirements
 - Python 2.7 or higher
 
-- Python packages: Pandas (pandas) and Requests (requests) is all you will need to 
-install (see requirements.txt)
+- Python packages: Pandas (pandas) and Requests (requests) is all you will need to install (see requirements.txt)
 
-- A valid Youtube API key (https://developers.google.com/youtube/v3/getting-started). 
-Be mindful of your request quota daily limits. You can check your API activity at 
-https://console.cloud.google.com/apis/dashboard and will get a "quotaExceeded" msg 
-when you've reached yours. API quotas are applied per project and you can create 
-multiple projects, if necessary.
+- A valid Youtube API key (https://developers.google.com/youtube/v3/getting-started). Be mindful of your request quota daily limits. You can check your API activity at https://console.cloud.google.com/apis/dashboard and will get a "quotaExceeded" msg when you've reached yours. API quotas are applied per project and you can create multiple projects, if necessary.
 
 - A TVH server to feed the list to clients as an IPTV network
 
@@ -37,23 +27,15 @@ multiple projects, if necessary.
 
 
 # Suggested TVH client-server layout
-In general, this program is well suited for a TVH server that has the following
-layout:
+In general, this program is well suited for a TVH server that has the following layout:
 
 ![TVH layout](img/tvh_layout.jpg)
 
-That is, there's one or more client that accesses a single TVH server that reads 
-an m3u playlist (output.m3u) that contains one or more muxes from Youtube 
-live-streams. Such a playlist is generated and managed by the current Python 
-program (youtube4tvh/main.py) and the live-streams are piped into the TVH server via 
-Streamlink. 
+That is, there's one or more client that accesses a single TVH server that reads an m3u playlist (output.m3u) that contains one or more muxes from Youtube live-streams. Such a playlist is generated and managed by the current Python program (youtube4tvh/main.py) and the live-streams are piped into the TVH server via Streamlink. 
 
 
 # Use-case
-This program was created with the intention to be used with a TVH server. However, 
-it's definitely possible to use it to simply create m3u playlists for other use 
-cases. If you have a player that can read m3u files, you might want to change the 
---pipecmd to whatever command the player will accept to read the live-stream. 
+This program was created with the intention to be used with a TVH server. However, it's definitely possible to use it to simply create m3u playlists for other use cases. If you have a player that can read m3u files, you might want to change the --pipecmd to whatever command the player will accept to read the live-stream. 
 
 
 # Installation
@@ -67,8 +49,6 @@ git clone https://github.com/cgomesu/youtube4tvh.git
 cd youtube4tvh
 # Via pip
 pip install .
-# Using setup.py directly
-python setup.py install
 # Test the program
 cd youtube4tvh
 python main.py --apikey=YOURKEY --channelname="DW News"
@@ -89,12 +69,6 @@ python main.py --apikey=YOURKEY --channelname="DW News"
 
 # Usage
 ```diff
-usage: main.py [-h] [--mode {add,update}] --apikey APIKEY [--apiurl APIURL]
-               [--channelid CHANNELID] [--channellogo CHANNELLOGO]
-               [--channelname CHANNELNAME] [--m3uinput M3UINPUT]
-               [--m3uoutput M3UOUTPUT] [--pipecmd PIPECMD]
-
-optional arguments:
 usage: main.py [-h] --apikey APIKEY [--apiurl APIURL] [--channelid CHANNELID]
                [--channellogo CHANNELLOGO] [--channelname CHANNELNAME]
                [--m3uinput M3UINPUT] [--m3uoutput M3UOUTPUT]

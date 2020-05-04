@@ -14,4 +14,8 @@
 #
 ####################################################
 #### Add/modify script according to your needs #####
-streamlink --stdout --hds-segment-threads 2 "$1" best
+streamlink \
+--stdout \
+--hls-segment-threads 5 \
+--hls-live-edge 15 \
+"$1" best
