@@ -5,7 +5,7 @@ Youtube4tvh is a Python CLI program that uses Youtube API to find live-streams a
 # Status
 ```diff
 - Working
-- Last checked on: May 1st 2020
+- Last checked on: May 5th 2020
 ```
 
 
@@ -47,7 +47,7 @@ apt-get install git python-pip
 cd /opt
 git clone https://github.com/cgomesu/youtube4tvh.git
 cd youtube4tvh
-# Via pip
+# Install required packages via pip
 pip install .
 # Test the program
 cd youtube4tvh
@@ -66,6 +66,7 @@ python main.py --apikey=YOURKEY --channelname="DW News"
 ```diff
 - Pending
 ```
+
 
 # Usage
 ```diff
@@ -103,9 +104,9 @@ optional arguments:
   --pipecmd PIPECMD     the command to pipe data to a player/server. for TVH
                         and streamlink, it is pipe:///path/to/bash
                         /path/to/streamlink.sh, for example. default is
-                        "pipe:///bin/bash /opt/youtube4tvh/streamlink.sh", per
-                        tutorial.
+                        "pipe:///bin/bash /opt/youtube4tvh/streamlink.sh".
 ```
+
 
 # Examples
 - Create a new youtube.m3u playlist with the live-stream from "France 24 English":

@@ -23,7 +23,7 @@ class YoutubeHandler:
         self.channellogo = channellogo
 
     def find_chinfo(self):
-        # Finds the ID of the channel that best matches the NAME provided
+        # Returns the ID of the channel that best matches the NAME provided and its LOGO
         try:
             # Check https://developers.google.com/youtube/v3/docs
             resource = "search"
@@ -48,7 +48,7 @@ class YoutubeHandler:
                 raise Exception
             # Get channelId from json
             self.channelid = response.json()["items"][0]["snippet"]["channelId"]
-            self.channellogo = response.json()["items"][0]["snippet"]["thumbnails"]["default"]["url"]
+            self.channellogo = response.json()["items"][0]["snippet"]["thumbnails"]["high"]["url"]
             print("The channel ID is: {}".format(self.channelid))
             print("The URL of the channel's logo is: {}".format(self.channellogo))
             return self.channelid, self.channellogo

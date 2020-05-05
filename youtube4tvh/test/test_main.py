@@ -61,7 +61,7 @@ def cli():
                     type=str,
                     help="the command to pipe data to a player/server. "
                          "for TVH and streamlink, it is pipe:///path/to/bash /path/to/streamlink.sh, for example. "
-                         "default is \"pipe:///bin/bash /opt/youtube4tvh/streamlink.sh\", per tutorial.")
+                         "default is \"pipe:///bin/bash /opt/youtube4tvh/streamlink.sh\".")
     return vars(ap.parse_args())
 
 
