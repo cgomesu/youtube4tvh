@@ -7,7 +7,7 @@ This utility is part of a guide I wrote on how to create an IPTV network in a TV
 # Status
 ```diff
 - Working
-- Last checked on: May 5th 2020
+- Last checked on: May 11th 2020
 ```
 
 
@@ -43,11 +43,11 @@ This program was created with the intention to be used with a TVH server. Howeve
 # Installation
 - Linux
 ```diff
-# Open a terminal window
-apt-get update
-apt-get install git python-pip
+# Open a terminal window with a sudo user
+sudo apt-get update
+sudo apt-get install git python-pip
 cd /opt
-git clone https://github.com/cgomesu/youtube4tvh.git
+sudo git clone https://github.com/cgomesu/youtube4tvh.git
 cd youtube4tvh
 # Install required packages via pip
 pip install .

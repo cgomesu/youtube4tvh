@@ -4,8 +4,10 @@
 ####################################################
 # The default version writes the data from the best
 # stream ($1, the first argument) to stdout using a
-# thread pool of size 2 to download HLS segments.
-# Everything else follows default values.
+# thread pool of size 4 to download HLS segments,
+# which start 10 segments away from the live source
+# to reduce the chance of buffering. Everything else
+# follows default values.
 #
 # Inspired by niwi_niwi's post at
 # https://tvheadend.org/boards/5/topics/35658
