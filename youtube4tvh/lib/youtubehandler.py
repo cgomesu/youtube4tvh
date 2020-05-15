@@ -35,16 +35,15 @@ class YoutubeHandler:
                 "q": self.channelname
             }
             response = requests.get(self.apiurl + resource, params=parameters)
-            status = response.status_code
             # Parse JSON for key status
-            if status != 200:
-                reason = response.json()["error"]["errors"][0]["reason"]
-                if reason == "keyInvalid":
+            if response.status_code != 200:
+                if response.json()["error"]["errors"][0]["reason"] == "keyInvalid":
                     print("The Youtube API key is not valid. "
                           "Review your credentials. Key provided: {}".format(self.apikey))
                     # Exit program if the API key is invalid because it's pointless to continue
                     exit()
-                print("Unable to use the Youtube API key. Reason: {}".format(reason))
+                print("Unable to use the Youtube API key. Reason: {}".
+                      format(response.json()["error"]["errors"][0]["reason"]))
                 raise Exception
             # Get channelId from json
             self.channelid = response.json()["items"][0]["snippet"]["channelId"]
@@ -71,20 +70,18 @@ class YoutubeHandler:
                 "order": "viewCount"
             }
             response = requests.get(self.apiurl + resource, params=parameters)
-            items = response.json()["items"]
-            status = response.status_code
             # Parse JSON for key status
-            if status != 200:
-                reason = response.json()["error"]["errors"][0]["reason"]
-                if reason == "keyInvalid":
+            if response.status_code != 200:
+                if response.json()["error"]["errors"][0]["reason"] == "keyInvalid":
                     print("The Youtube API key is invalid. "
                           "Review your credentials. Key provided: {}".format(self.apikey))
                     # Exit program if the API key is invalid because it's pointless to continue
                     exit()
-                print("Unable to use the Youtube API key. Reason: {}".format(reason))
+                print("Unable to use the Youtube API key. Reason: {}".
+                      format(response.json()["error"]["errors"][0]["reason"]))
                 raise Exception
             # Check if there's a live-stream available. Raise exception otherwise.
-            if not items:
+            if not response.json()["items"]:
                 print("Unable to find a live-stream on channel ID {}".format(self.channelid))
                 raise Exception
             print("A live-stream was found!  Extracting info from it...")

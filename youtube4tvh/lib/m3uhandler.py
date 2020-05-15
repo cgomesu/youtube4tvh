@@ -15,66 +15,6 @@ class M3uHandler:
         self.m3uinput = m3uinput
         self.m3uoutput = m3uoutput
 
-    def append(self,
-               dataframe,
-               channelid,
-               channelname,
-               channelcountry,
-               channellogo,
-               pipecmd,
-               url):
-        # Append stream data to the data frame
-        channelcontent = "#EXTINF:-1 " \
-                         "tvg-id=\"{}\" " \
-                         "tvg-name=\"{}\" " \
-                         "tvg-language=\"\" " \
-                         "tvg-country=\"{}\" " \
-                         "tvg-logo=\"{}\" " \
-                         "tvg-url=\"\" " \
-                         "group-title=\"\"," \
-                         "{}\n" \
-                         "{} {}".format(channelid,
-                                                  channelname,
-                                                  channelcountry,
-                                                  channellogo,
-                                                  channelname,
-                                                  pipecmd,
-                                                  url)
-        data = {
-            "channel-content": channelcontent,
-            "channel-name": channelname,
-            "channel-duration": "-1",
-            "tvg-id": channelid,
-            "tvg-name": channelname,
-            "tvg-language": "",
-            "tvg-country": channelcountry,
-            "tvg-logo": channellogo,
-            "tvg-url": "",
-            "group-title": "",
-            "stream-url": "{} {}".format(pipecmd, url)
-        }
-        try:
-            df = dataframe.append(data, ignore_index=True)
-            print("Stream info successfully appended to the data frame!")
-            return df
-        except Exception as err:
-            print("There was an error APPENDING data to the data frame. Error: {}".format(err))
-            return None
-
-    def extract_column(self, dataframe, column_name):
-        # Extract content from a data frame column that matches the column_name
-        try:
-            content_list = []
-            for name, content in dataframe.iteritems():
-                if name == column_name:
-                    # Save match to a list
-                    content_list = content.values.tolist()
-                    break
-            return content_list
-        except Exception as err:
-            print("There was an error looking for the column \"{}\". Error: {}".format(column_name, err))
-            return None
-
     def parse(self):
         # Define regex dictionary for iptv m3u files
         rx_dict = {
@@ -200,19 +140,118 @@ class M3uHandler:
             print("Will continue but data frame is None.")
             return None
 
-    def search(self, dataframe, column, term):
-        # Return True if there's at least one cell containing the term in the data frame
+    def write(self, dataframe):
+        # Consolidate a m3u data frame to a .m3u file
         try:
-            sbool = dataframe[column].str.contains(term).any()
-            if sbool:
-                return True
-            elif not sbool:
-                return False
+            with open(self.m3uoutput, "w") as f:
+                f.write("#EXTM3U\n")
+                for row in dataframe.itertuples(index=False):
+                    channel_data = {
+                        'channel-duration': row[dataframe.columns.get_loc("channel-duration")],
+                        'tvg-id': row[dataframe.columns.get_loc("tvg-id")],
+                        'tvg-name': row[dataframe.columns.get_loc("tvg-name")],
+                        'tvg-language': row[dataframe.columns.get_loc("tvg-language")],
+                        'tvg-country': row[dataframe.columns.get_loc("tvg-country")],
+                        'tvg-logo': row[dataframe.columns.get_loc("tvg-logo")],
+                        'tvg-url': row[dataframe.columns.get_loc("tvg-url")],
+                        'group-title': row[dataframe.columns.get_loc("group-title")],
+                        'channel-name': row[dataframe.columns.get_loc("channel-name")],
+                        'stream-url': row[dataframe.columns.get_loc("stream-url")]
+                    }
+                    str_channel_data = str("#EXTINF:{} "
+                                           "tvg-id=\"{}\" "
+                                           "tvg-name=\"{}\" "
+                                           "tvg-language=\"{}\" "
+                                           "tvg-country=\"{}\" "
+                                           "tvg-logo=\"{}\" "
+                                           "tvg-url=\"{}\" "
+                                           "group-title=\"{}\","
+                                           "{}\n"
+                                           "{}\n").format(channel_data["channel-duration"],
+                                                          channel_data["tvg-id"],
+                                                          channel_data["tvg-name"],
+                                                          channel_data["tvg-language"],
+                                                          channel_data["tvg-country"],
+                                                          channel_data["tvg-logo"],
+                                                          channel_data["tvg-url"],
+                                                          channel_data["group-title"],
+                                                          channel_data["channel-name"],
+                                                          channel_data["stream-url"])
+                    f.write(str_channel_data)
+                print("Data frame was successfully exported to {}!".format(self.m3uoutput))
         except Exception as err:
-            print("There was an error searching for the term {} on column {}. Error: {}".format(term, column, err))
-            return False
+            print("There was an error writing the data frame to the m3u file. Error: {}".format(err))
 
-    def template(self):
+    @staticmethod
+    def append(dataframe,
+               channelid,
+               channelname,
+               channelcountry,
+               channellogo,
+               pipecmd,
+               url):
+        # Append stream data to the data frame
+        channelcontent = "#EXTINF:-1 " \
+                         "tvg-id=\"{}\" " \
+                         "tvg-name=\"{}\" " \
+                         "tvg-language=\"\" " \
+                         "tvg-country=\"{}\" " \
+                         "tvg-logo=\"{}\" " \
+                         "tvg-url=\"\" " \
+                         "group-title=\"\"," \
+                         "{}\n" \
+                         "{} {}".format(channelid,
+                                                  channelname,
+                                                  channelcountry,
+                                                  channellogo,
+                                                  channelname,
+                                                  pipecmd,
+                                                  url)
+        data = {
+            "channel-content": channelcontent,
+            "channel-name": channelname,
+            "channel-duration": "-1",
+            "tvg-id": channelid,
+            "tvg-name": channelname,
+            "tvg-language": "",
+            "tvg-country": channelcountry,
+            "tvg-logo": channellogo,
+            "tvg-url": "",
+            "group-title": "",
+            "stream-url": "{} {}".format(pipecmd, url)
+        }
+        try:
+            df = dataframe.append(data, ignore_index=True)
+            print("Stream info successfully appended to the data frame!")
+            return df
+        except Exception as err:
+            print("There was an error APPENDING data to the data frame. Error: {}".format(err))
+            return None
+
+    @staticmethod
+    def extract_column(dataframe, column_name):
+        # Extract content from a data frame column that matches the column_name
+        try:
+            content_list = []
+            for name, content in dataframe.iteritems():
+                if name == column_name:
+                    # Save match to a list
+                    content_list = content.values.tolist()
+                    break
+            return content_list
+        except Exception as err:
+            print("There was an error looking for the column \"{}\". Error: {}".format(column_name, err))
+            return None
+
+    @staticmethod
+    def search(dataframe, column, term):
+        # Return True if there's at least one cell containing the term in the data frame
+        if dataframe[column].str.contains(term).any():
+            return True
+        return False
+
+    @staticmethod
+    def template():
         # Create a template data frame with m3u column labels
         data = {
             "channel-content": [],
@@ -231,8 +270,8 @@ class M3uHandler:
         print("Empty data frame created.")
         return df
 
-    def update(self,
-               dataframe,
+    @staticmethod
+    def update(dataframe,
                channelid,
                channelname,
                channelcountry,
@@ -299,45 +338,3 @@ class M3uHandler:
             print("There was an error UPDATING the data frame. Error: {}".format(err))
             boolean = False
             return dataframe, boolean
-
-    def write(self, dataframe):
-        # Consolidate a m3u data frame to a .m3u file
-        try:
-            with open(self.m3uoutput, "w") as f:
-                f.write("#EXTM3U\n")
-                for row in dataframe.itertuples(index=False):
-                    channel_data = {
-                        'channel-duration': row[dataframe.columns.get_loc("channel-duration")],
-                        'tvg-id': row[dataframe.columns.get_loc("tvg-id")],
-                        'tvg-name': row[dataframe.columns.get_loc("tvg-name")],
-                        'tvg-language': row[dataframe.columns.get_loc("tvg-language")],
-                        'tvg-country': row[dataframe.columns.get_loc("tvg-country")],
-                        'tvg-logo': row[dataframe.columns.get_loc("tvg-logo")],
-                        'tvg-url': row[dataframe.columns.get_loc("tvg-url")],
-                        'group-title': row[dataframe.columns.get_loc("group-title")],
-                        'channel-name': row[dataframe.columns.get_loc("channel-name")],
-                        'stream-url': row[dataframe.columns.get_loc("stream-url")]
-                    }
-                    str_channel_data = str("#EXTINF:{} "
-                                           "tvg-id=\"{}\" "
-                                           "tvg-name=\"{}\" "
-                                           "tvg-language=\"{}\" "
-                                           "tvg-country=\"{}\" "
-                                           "tvg-logo=\"{}\" "
-                                           "tvg-url=\"{}\" "
-                                           "group-title=\"{}\","
-                                           "{}\n"
-                                           "{}\n").format(channel_data["channel-duration"],
-                                                          channel_data["tvg-id"],
-                                                          channel_data["tvg-name"],
-                                                          channel_data["tvg-language"],
-                                                          channel_data["tvg-country"],
-                                                          channel_data["tvg-logo"],
-                                                          channel_data["tvg-url"],
-                                                          channel_data["group-title"],
-                                                          channel_data["channel-name"],
-                                                          channel_data["stream-url"])
-                    f.write(str_channel_data)
-                print("Data frame was successfully exported to {}!".format(self.m3uoutput))
-        except Exception as err:
-            print("There was an error writing the data frame to the m3u file. Error: {}".format(err))
