@@ -15,52 +15,6 @@ class M3uHandler:
         self.m3uinput = m3uinput
         self.m3uoutput = m3uoutput
 
-    def append(self,
-               dataframe,
-               channelid,
-               channelname,
-               channelcountry,
-               channellogo,
-               pipecmd,
-               url):
-        # Append stream data to the data frame
-        channelcontent = "#EXTINF:-1 " \
-                         "tvg-id=\"{}\" " \
-                         "tvg-name=\"{}\" " \
-                         "tvg-language=\"\" " \
-                         "tvg-country=\"{}\" " \
-                         "tvg-logo=\"{}\" " \
-                         "tvg-url=\"\" " \
-                         "group-title=\"\"," \
-                         "{}\n" \
-                         "{} {}".format(channelid,
-                                                  channelname,
-                                                  channelcountry,
-                                                  channellogo,
-                                                  channelname,
-                                                  pipecmd,
-                                                  url)
-        data = {
-            "channel-content": channelcontent,
-            "channel-name": channelname,
-            "channel-duration": "-1",
-            "tvg-id": channelid,
-            "tvg-name": channelname,
-            "tvg-language": "",
-            "tvg-country": channelcountry,
-            "tvg-logo": channellogo,
-            "tvg-url": "",
-            "group-title": "",
-            "stream-url": "{} {}".format(pipecmd, url)
-        }
-        try:
-            df = dataframe.append(data, ignore_index=True)
-            print("Stream info successfully appended to the data frame!")
-            return df
-        except Exception as err:
-            print("There was an error APPENDING data to the data frame. Error: {}".format(err))
-            return None
-
     def parse(self):
         # Define regex dictionary for iptv m3u files
         rx_dict = {
@@ -227,6 +181,52 @@ class M3uHandler:
                 print("Data frame was successfully exported to {}!".format(self.m3uoutput))
         except Exception as err:
             print("There was an error writing the data frame to the m3u file. Error: {}".format(err))
+
+    @staticmethod
+    def append(dataframe,
+               channelid,
+               channelname,
+               channelcountry,
+               channellogo,
+               pipecmd,
+               url):
+        # Append stream data to the data frame
+        channelcontent = "#EXTINF:-1 " \
+                         "tvg-id=\"{}\" " \
+                         "tvg-name=\"{}\" " \
+                         "tvg-language=\"\" " \
+                         "tvg-country=\"{}\" " \
+                         "tvg-logo=\"{}\" " \
+                         "tvg-url=\"\" " \
+                         "group-title=\"\"," \
+                         "{}\n" \
+                         "{} {}".format(channelid,
+                                                  channelname,
+                                                  channelcountry,
+                                                  channellogo,
+                                                  channelname,
+                                                  pipecmd,
+                                                  url)
+        data = {
+            "channel-content": channelcontent,
+            "channel-name": channelname,
+            "channel-duration": "-1",
+            "tvg-id": channelid,
+            "tvg-name": channelname,
+            "tvg-language": "",
+            "tvg-country": channelcountry,
+            "tvg-logo": channellogo,
+            "tvg-url": "",
+            "group-title": "",
+            "stream-url": "{} {}".format(pipecmd, url)
+        }
+        try:
+            df = dataframe.append(data, ignore_index=True)
+            print("Stream info successfully appended to the data frame!")
+            return df
+        except Exception as err:
+            print("There was an error APPENDING data to the data frame. Error: {}".format(err))
+            return None
 
     @staticmethod
     def extract_column(dataframe, column_name):

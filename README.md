@@ -7,7 +7,7 @@ This utility is part of a guide I wrote on how to create an IPTV network in a TV
 # Status
 ```diff
 - Working
-- Last checked on: May 11th 2020
+- Last checked on: May 15th 2020
 ```
 
 
@@ -57,16 +57,6 @@ python main.py --apikey=YOURKEY --channelname="DW News"
 # Now, there should be an output.m3u playlist on the same folder with the DW News channel live-stream.
 # If you run into permission issues, then 'sudo chown -R YOURUSER:sudo /opt/youtube4tvh', changing YOURSER for your sudo username.
 # If TVH is unable to run streamlink.sh, try 'sudo chmod 0777 /opt/youtube4tvh/streamlink.sh'.
-```
-
-- Mac
-```diff
-- Pending
-```
-
-- Windows
-```diff
-- Pending
 ```
 
 
