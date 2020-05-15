@@ -163,9 +163,8 @@ def update_stream():
 def main():
     if args_cli["mode"] == "update":
         update_stream()
-        print("[INFO] We're all done here. Bye!")
-        exit()
-    add_stream()
+    elif args_cli["mode"] == "add":
+        add_stream()
     print("[INFO] We're all done here. Bye!")
     exit()
 
