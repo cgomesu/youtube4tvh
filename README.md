@@ -7,7 +7,7 @@ This utility is part of a guide I wrote on how to create an IPTV network in a TV
 # Status
 ```diff
 - Working
-- Last checked on: Jun 25th 2020
+- Last checked on: Aug 27th 2020
 ```
 
 
@@ -21,7 +21,7 @@ This utility is part of a guide I wrote on how to create an IPTV network in a TV
 
 - Python packages: Pandas (pandas) and Requests (requests) is all you will need to install (see requirements.txt)
 
-- A valid Youtube API key (https://developers.google.com/youtube/v3/getting-started). Be mindful of your request quota daily limits. You can check your API activity at https://console.cloud.google.com/apis/dashboard and will get a "quotaExceeded" msg when you've reached yours. API quotas are applied per project and you can create multiple projects, if necessary.
+- A valid Youtube API key (https://developers.google.com/youtube/v3/getting-started). Be mindful of your request quota daily limits. You can check your API activity at https://console.cloud.google.com/apis/dashboard and will get a "quotaExceeded" msg when you've reached yours. API quotas are applied per project and you can create multiple projects, if necessary. \[For reference, each channel add/update uses 200 quota points (see `search` resource cost in the [Quota Calculator](https://developers.google.com/youtube/v3/determine_quota_cost)) and because the daily limit is 10k, I suggest using one API key for up to 50 channels (or similarly, update a .m3u file with 25 channels twice a day, or a .m3u file with 10 channels five times a day, and so on). Daily quotas reset at **00:00 *Pacific Time***, so configure your cron jobs accordingly.\] 
 
 - A TVH server to feed the list to clients as an IPTV network
 
