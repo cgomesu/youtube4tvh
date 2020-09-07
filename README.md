@@ -7,7 +7,7 @@ This utility is part of a guide I wrote on how to create an IPTV network in a TV
 # Status
 ```diff
 - Working
-- Last checked on: Aug 27th 2020
+- Last checked on: September 7th 2020
 ```
 
 
