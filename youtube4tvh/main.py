@@ -7,7 +7,7 @@
 #               The author does not provide any sort warranty whatsoever.
 
 from lib.m3uhandler import M3uHandler
-from lib.youtubehandler import YoutubeHandler
+from lib.youtubehandler import YoutubeHandlerAPI
 from argparse import ArgumentParser
 
 
@@ -71,11 +71,11 @@ def add_stream():
         print("[INFO] A channel name must be provided at the very least. See --help.  Bye!")
         exit()
     # YOUTUBE API HANDLER
-    youtube = YoutubeHandler(args_cli["apiurl"],
-                             args_cli["apikey"],
-                             args_cli["channelid"],
-                             args_cli["channelname"],
-                             args_cli["channellogo"])
+    youtube = YoutubeHandlerAPI(args_cli["apiurl"],
+                                args_cli["apikey"],
+                                args_cli["channelid"],
+                                args_cli["channelname"],
+                                args_cli["channellogo"])
     # Extract channel info
     if not args_cli["channelid"]:
         print("[INFO] Retrieving channel info using the NAME provided...")
