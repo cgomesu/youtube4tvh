@@ -19,19 +19,17 @@ class YoutubeHandlerNoAPI:
     """
     # a regex dictionary for parsing content from various GET requests
     regex_dict = {
-        'search_content': re.compile(
-            r'\{\"responseContext\"[^;]+',
-            re.IGNORECASE | re.MULTILINE),
+        'search_content': re.compile(r'(?P<json_data>\{\"responseContext\".+\})\;\n', re.IGNORECASE | re.MULTILINE),
     }
 
-    def __init__(self, channelid, channelname, channellogo):
+    def __init__(self, channelid=None, channelname=None, channellogo=None):
         self.channelid = channelid
         self.channelname = channelname
         self.channellogo = channellogo
         print('fetching user-agent for headers (it may take a few seconds)...')
         self.req_headers = {
             # fetch ua from current real-world usage stats
-            "User-Agent": UserAgent().random,
+            "User-Agent": UserAgent(cache=False).random,
             'Accept-Language': 'en'
         }
         self.req_url = {
@@ -44,18 +42,17 @@ class YoutubeHandlerNoAPI:
         # https://requests.readthedocs.io/en/latest/user/advanced/#session-objects
         self.session = requests.Session()
 
-    def search_channel(self, query):
+    def find_chinfo(self):
         """
-        Search Youtube for channels and returns full json from ytInitialData
-        :param query: a string with the name of a channel (e.g., france 24)
-        :return: json or empty dictionary
+        Returns the ID of the channel that best matches the NAME provided and its LOGO
+        :return: channelid and channellogo
         """
         parameters = {
-            'search_query': query,
+            'search_query': self.channelname,
             # list channels by relevance (default)
             'sp': 'EgIQAg==',
         }
-        print('requesting search results for \'{}\'...'.format(query))
+        print('requesting search results for \'{}\'...'.format(self.channelname))
         try:
             req = self.session.get(url=self.req_url['protocol'] +
                                    self.req_url['subdomain'] +
@@ -72,35 +69,40 @@ class YoutubeHandlerNoAPI:
                 req.encoding = 'utf-8'
         except requests.ConnectionError:
             print('there was a network problem. are you connected to the Internet?')
-            return {}
+            return None, None
         except requests.Timeout:
             print('connection timed-out.')
-            return {}
+            return None, None
         except requests.HTTPError:
             print('the url returned a bad HTTP code (not 200). check the url.')
-            return {}
+            return None, None
         print('parsing request...')
         try:
-            return json.loads(re.findall(self.regex_dict['search_content'], req.text)[0])
+            # TODO: capture regex and json errors properly
+            find_data = re.findall(self.regex_dict['search_content'], req.text)
+            # TODO: validate find_data before json.loads()
+            data = json.loads(find_data[0])
+            data_list = data['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]
+            data_item = data_list['itemSectionRenderer']['contents']
+            # extract info from first search result
+            # TODO: loop items to make sure the data are from the correct channel
+            # channelname = data_item[00]['channelRenderer']['title']['simpleText']
+            channelid = data_item[00]['channelRenderer']['channelId']
+            channellogo = 'https:' + data_item[00]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
+            print(channelid, channellogo)
+            return channelid, channellogo
         except Exception as err:
             print('error parsing the requested text: {}'.format(err))
             # capture request that produced an error to debug it
             print('writing the request to a file...')
-            self.write_request(filename=query.replace(' ', '_'), text=req.text)
-            return {}
+            self.write_request(filename='failed_request_-_' + self.channelname.replace(' ', '_'), text=req.content)
+            return None, None
+
+    def find_stream(self):
+        pass
 
     @staticmethod
-    def parse_channel_json(data):
-        # TODO: validate data first
-        contents = data['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents']
-        for content in contents:
-            channelname = content['channelRenderer']['title']['simpleText']
-            channelid = content['channelRenderer']['channelId']
-            channellogo = 'https:' + content['channelRenderer']['thumbnail']['thumbnails'][0]['url']
-            print(channelname, channelid, channellogo)
-
-    @staticmethod
-    def write_request(filename='last_request', text='empty'):
+    def write_request(filename='last_request', text=None):
         try:
             with open(filename + '.txt', 'w') as f:
                 f.write(text)
@@ -126,7 +128,10 @@ class YoutubeHandlerAPI:
         self.channellogo = channellogo
 
     def find_chinfo(self):
-        # Returns the ID of the channel that best matches the NAME provided and its LOGO
+        """
+        Returns the ID of the channel that best matches the NAME provided and its LOGO
+        :return: channelid, channellogo OR None, None
+        """
         try:
             # Check https://developers.google.com/youtube/v3/docs
             resource = "search"
@@ -159,7 +164,10 @@ class YoutubeHandlerAPI:
             return None, None
 
     def find_stream(self):
-        # Retrieves info from the live-stream of a specified channelId
+        """
+        Retrieves info from the live-stream of a specified channelId
+        :return: video as a dictionary OR None
+        """
         try:
             # Check https://developers.google.com/youtube/v3/docs
             # If multiple streams, prioritize highest view count
