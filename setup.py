@@ -12,13 +12,13 @@ from setuptools import find_packages, setup, Command
 NAME = 'youtube4tvh'
 DESCRIPTION = 'Save a Youtube live-stream to an M3U playlist'
 URL = 'https://github.com/cgomesu/youtube4tvh'
-EMAIL = 'cf365@cornell.edu'
+EMAIL = 'me@cgomesu.com'
 AUTHOR = 'CFA Gomes'
 REQUIRES_PYTHON = '>=2.7.0'
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 
 REQUIRED = [
-    'requests', 'pandas'
+    'requests', 'pandas', 'fake-useragent'
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
