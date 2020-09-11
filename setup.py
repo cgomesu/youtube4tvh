@@ -18,7 +18,7 @@ REQUIRES_PYTHON = '>=2.7.0'
 VERSION = '0.1.1'
 
 REQUIRED = [
-    'requests', 'pandas', 'fake-useragent'
+    'requests', 'pandas'
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))

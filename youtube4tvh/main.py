@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 # Purpose:      Save a Youtube live-stream to an M3U playlist
 # Author:       cgomesu
-# Date:         September 10th, 2020
+# Date:         September 11th, 2020
 # Disclaimer:   Use at your own discretion.
 #               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
 
 from lib.m3uhandler import M3uHandler
-from lib.youtubehandler import YoutubeHandlerAPI
+from lib.youtubehandler import YoutubeHandlerAPI, YoutubeHandlerNoAPI
 from argparse import ArgumentParser
 
 
@@ -15,7 +15,7 @@ def cli():
     ap = ArgumentParser()
     ap.add_argument("--apikey",
                     type=str,
-                    required=True,
+                    required=False,
                     help="your API KEY to use the Youtube API. "
                          "see https://developers.google.com/youtube/v3/getting-started.")
     ap.add_argument("--apiurl",
@@ -71,11 +71,16 @@ def add_stream():
         print("[INFO] A channel name must be provided at the very least. See --help.  Bye!")
         exit()
     # YOUTUBE API HANDLER
-    youtube = YoutubeHandlerAPI(args_cli["apiurl"],
-                                args_cli["apikey"],
-                                args_cli["channelid"],
-                                args_cli["channelname"],
-                                args_cli["channellogo"])
+    if args_cli['apikey']:
+        youtube = YoutubeHandlerAPI(apiurl=args_cli["apiurl"],
+                                    apikey=args_cli["apikey"],
+                                    channelid=args_cli["channelid"],
+                                    channelname=args_cli["channelname"],
+                                    channellogo=args_cli["channellogo"])
+    elif not args_cli['apikey']:
+        youtube = YoutubeHandlerNoAPI(channelid=args_cli["channelid"],
+                                      channelname=args_cli["channelname"],
+                                      channellogo=args_cli["channellogo"])
     # Extract channel info
     if not args_cli["channelid"]:
         print("[INFO] Retrieving channel info using the NAME provided...")

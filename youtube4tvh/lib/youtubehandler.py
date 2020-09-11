@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Purpose:      Save a Youtube live-stream to an M3U playlist
 # Author:       cgomesu
-# Date:         September 10th, 2020
+# Date:         September 11th, 2020
 # Disclaimer:   Use at your own discretion.
 #               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
@@ -9,7 +9,6 @@
 import re
 import requests
 import json
-from fake_useragent import UserAgent
 
 
 class YoutubeHandlerNoAPI:
@@ -22,15 +21,21 @@ class YoutubeHandlerNoAPI:
         'search_content': re.compile(r'(?P<json_data>\{\"responseContext\".+\})\;\n', re.IGNORECASE | re.MULTILINE),
     }
 
+    @staticmethod
+    def write_request(filename='last_request', text=None):
+        try:
+            with open(filename + '.txt', 'w') as f:
+                f.write(text)
+        except Exception as err:
+            print('there was an error writing the text to the file \'{}\'.txt: {}'.format(filename, err))
+
     def __init__(self, channelid=None, channelname=None, channellogo=None):
         self.channelid = channelid
         self.channelname = channelname
         self.channellogo = channellogo
-        print('fetching user-agent for headers (it may take a few seconds)...')
         self.req_headers = {
-            # fetch ua from current real-world usage stats
-            "User-Agent": UserAgent(cache=False).random,
-            'Accept-Language': 'en'
+            "User-Agent": 'Mozilla/5.0 (Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0',
+            'Accept-Language': 'en',
         }
         self.req_url = {
             'protocol': 'https://',
@@ -78,36 +83,27 @@ class YoutubeHandlerNoAPI:
             return None, None
         print('parsing request...')
         try:
-            # TODO: capture regex and json errors properly
             find_data = re.findall(self.regex_dict['search_content'], req.text)
-            # TODO: validate find_data before json.loads()
+            # TODO: improve find_data validation before json.loads()
+            if not find_data[0]:
+                raise Exception
             data = json.loads(find_data[0])
-            data_list = data['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]
-            data_item = data_list['itemSectionRenderer']['contents']
-            # extract info from first search result
+            data_list = data['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']
+            data_item = data_list['contents'][0]['itemSectionRenderer']
             # TODO: loop items to make sure the data are from the correct channel
-            # channelname = data_item[00]['channelRenderer']['title']['simpleText']
-            channelid = data_item[00]['channelRenderer']['channelId']
-            channellogo = 'https:' + data_item[00]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
-            print(channelid, channellogo)
+            # extract info from the FIRST search result
+            # channelname = data_item['contents'][00]['channelRenderer']['title']['simpleText']
+            channelid = data_item['contents'][00]['channelRenderer']['channelId']
+            channellogo = 'https:' + data_item['contents'][00]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
             return channelid, channellogo
         except Exception as err:
-            print('error parsing the requested text: {}'.format(err))
-            # capture request that produced an error to debug it
-            print('writing the request to a file...')
+            print('there was an error while parsing the request: {}'.format(err))
+            print('writing the request to \'{}\'...'.format('failed_request_-_' + self.channelname.replace(' ', '_')))
             self.write_request(filename='failed_request_-_' + self.channelname.replace(' ', '_'), text=req.content)
             return None, None
 
     def find_stream(self):
         pass
-
-    @staticmethod
-    def write_request(filename='last_request', text=None):
-        try:
-            with open(filename + '.txt', 'w') as f:
-                f.write(text)
-        except Exception as err:
-            print('there was an error writing the text to the file \'{}\'.txt: {}'.format(filename, err))
 
 
 class YoutubeHandlerAPI:
