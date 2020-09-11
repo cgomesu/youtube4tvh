@@ -14,33 +14,27 @@ import json
 class YoutubeHandlerNoAPI:
     """
     A class for extracting info from Youtube using it's internal API.
-    No valid API key is required.
+    No valid API key is required and there are no usage limits.
     """
     # a regex dictionary for parsing content from various GET requests
     regex_dict = {
-        'search_content': re.compile(r'(?P<json_data>\{\"responseContext\".+\})\;\n', re.IGNORECASE | re.MULTILINE),
+        'json_content': re.compile(r'(?P<json_data>\{\"responseContext\".+\})\;\n', re.IGNORECASE | re.MULTILINE),
     }
 
-    @staticmethod
-    def write_request(filename='last_request', text=None):
-        try:
-            with open(filename + '.txt', 'w') as f:
-                f.write(text)
-        except Exception as err:
-            print('there was an error writing the text to the file \'{}\'.txt: {}'.format(filename, err))
-
-    def __init__(self, channelid=None, channelname=None, channellogo=None):
-        self.channelid = channelid
+    def __init__(self, channelid, channelname, channellogo):
         self.channelname = channelname
+        self.channelid = channelid
         self.channellogo = channellogo
         self.req_headers = {
             "User-Agent": 'Mozilla/5.0 (Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0',
             'Accept-Language': 'en',
         }
         self.req_url = {
-            'protocol': 'https://',
-            'subdomain': 'www.',
-            'domain': 'youtube.com/',
+            'protocol': 'https',
+            'subdomain': 'www',
+            'domain': 'youtube.com',
+            'subfolder_search': '/',
+            'subfolder_channel': '/channel/',
             'resource_search': 'results',
             'resource_videos': 'videos',
         }
@@ -59,10 +53,11 @@ class YoutubeHandlerNoAPI:
         }
         print('requesting search results for \'{}\'...'.format(self.channelname))
         try:
-            req = self.session.get(url=self.req_url['protocol'] +
-                                   self.req_url['subdomain'] +
-                                   self.req_url['domain'] +
-                                   self.req_url['resource_search'],
+            req = self.session.get(url='{}://{}.{}{}{}'.format(self.req_url['protocol'],
+                                                                self.req_url['subdomain'],
+                                                                self.req_url['domain'],
+                                                                self.req_url['subfolder_search'],
+                                                                self.req_url['resource_search']),
                                    headers=self.req_headers,
                                    params=parameters)
             print('url: {}'.format(req.url))
@@ -72,18 +67,18 @@ class YoutubeHandlerNoAPI:
             if req.encoding:
                 print('encoding request to utf-8...')
                 req.encoding = 'utf-8'
-        except requests.ConnectionError:
-            print('there was a network problem. are you connected to the Internet?')
+        except requests.ConnectionError as err:
+            print('there was a network problem: {}'.format(err))
             return None, None
         except requests.Timeout:
-            print('connection timed-out.')
+            print('the connection timed-out.')
             return None, None
         except requests.HTTPError:
             print('the url returned a bad HTTP code (not 200). check the url.')
             return None, None
         print('parsing request...')
         try:
-            find_data = re.findall(self.regex_dict['search_content'], req.text)
+            find_data = re.findall(self.regex_dict['json_content'], req.text)
             # TODO: improve find_data validation before json.loads()
             if not find_data[0]:
                 raise Exception
@@ -93,23 +88,86 @@ class YoutubeHandlerNoAPI:
             # TODO: loop items to make sure the data are from the correct channel
             # extract info from the FIRST search result
             # channelname = data_item['contents'][00]['channelRenderer']['title']['simpleText']
-            channelid = data_item['contents'][00]['channelRenderer']['channelId']
-            channellogo = 'https:' + data_item['contents'][00]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
-            return channelid, channellogo
+            self.channelid = data_item['contents'][00]['channelRenderer']['channelId']
+            self.channellogo = 'https:' + \
+                               data_item['contents'][00]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
+            return self.channelid, self.channellogo
         except Exception as err:
             print('there was an error while parsing the request: {}'.format(err))
-            print('writing the request to \'{}\'...'.format('failed_request_-_' + self.channelname.replace(' ', '_')))
-            self.write_request(filename='failed_request_-_' + self.channelname.replace(' ', '_'), text=req.content)
             return None, None
 
     def find_stream(self):
-        pass
+        parameters = {
+            # show live streams now
+            'view': 2,
+            'live_view': 501,
+        }
+        print('requesting live streams from channel \'{}\' with id {}...'.format(self.channelname, self.channelid))
+        try:
+            req = self.session.get(url='{}://{}.{}{}{}{}'.format(self.req_url['protocol'],
+                                                                 self.req_url['subdomain'],
+                                                                 self.req_url['domain'],
+                                                                 self.req_url['subfolder_channel'],
+                                                                 self.channelid + '/',
+                                                                 self.req_url['resource_videos']),
+                                   headers=self.req_headers,
+                                   params=parameters)
+            print('url: {}'.format(req.url))
+            print('status code: {}'.format(req.status_code))
+            if req.status_code is not 200:
+                raise requests.HTTPError
+            if req.encoding:
+                print('encoding request to utf-8...')
+                req.encoding = 'utf-8'
+        except requests.ConnectionError as err:
+            print('there was a network problem: {}'.format(err))
+            return None, None
+        except requests.Timeout:
+            print('the connection timed-out.')
+            return None, None
+        except requests.HTTPError:
+            print('the url returned a bad HTTP code (not 200). check the url.')
+            return None, None
+        print('parsing request...')
+        # TODO: add proper exceptions
+        try:
+            find_data = re.findall(self.regex_dict['json_content'], req.text)
+            if not find_data[0]:
+                raise Exception
+            data = json.loads(find_data[0])
+            data_tabs = data['contents']['twoColumnBrowseResultsRenderer']['tabs']
+            for i, tab in enumerate(data_tabs):
+                if 'Videos' in tab['tabRenderer']['title']:
+                    data_videos = data_tabs[i]
+                    break
+                data_videos = None
+            if not data_videos:
+                print('videos section not found in get request.')
+                raise Exception
+            data_videos_list = data_videos['tabRenderer']['content']['sectionListRenderer']
+            data_videos_item = data_videos_list['contents'][0]['itemSectionRenderer']
+            data_videos_item_video = data_videos_item['contents'][0]['gridRenderer']['items'][0]['gridVideoRenderer']
+            # extract livestream URL from the first list item
+            video = {
+                'title': data_videos_item_video['title']['runs'][0]['text'].encode('utf-8'),
+                'description': 'NA',
+                'id': data_videos_item_video['videoId'],
+                'url': "https://www.youtube.com/watch?v=" + data_videos_item_video['videoId'],
+                'date': 'NA',
+                'region': 'NA',
+            }
+            print('Done extracting info from the live-stream!')
+            print('Test it out: {}'.format(video['url']))
+            return video
+        except Exception as err:
+            print("There was an error while trying to retrieve the videoId from the live-stream: {}".format(err))
+            return None
 
 
 class YoutubeHandlerAPI:
     """
     A class for extracting info from Youtube using its official API v3.
-    A valid API key is required.
+    A valid API key is required and there are quota limits.
     """
     def __init__(self,
                  apiurl,
