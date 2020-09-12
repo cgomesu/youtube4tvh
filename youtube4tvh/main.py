@@ -136,7 +136,9 @@ def add_stream():
         # Consolidate m3u data frame to a .m3u file
         print('[INFO] Writing data frame to .m3u file...')
         m3u.write(m3u_df)
-    print('[INFO] Done!')
+        print('[INFO] Done!')
+    if not stream:
+        print('[WARNING] Unable to retrieve data from channel \'{}\'.'.format(args_cli['channelname']))
 
 
 def update_stream():
