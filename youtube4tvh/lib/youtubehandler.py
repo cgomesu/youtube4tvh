@@ -6,14 +6,14 @@
 #               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
 
+import json
 import re
 import requests
-import json
 
 
 class YoutubeHandlerNoAPI:
     """
-    A class for extracting info from Youtube using it's internal API.
+    A class for extracting info from Youtube from its frontend.
     No valid API key is required and there are no usage limits.
     """
     # a regex dictionary for parsing content from various GET requests
@@ -79,18 +79,22 @@ class YoutubeHandlerNoAPI:
         print('parsing request...')
         try:
             find_data = re.findall(self.regex_dict['json_content'], req.text)
-            # TODO: improve find_data validation before json.loads()
-            if not find_data[0]:
-                raise Exception
+            if not find_data:
+                raise Exception('unable to find the json content')
             data = json.loads(find_data[0])
             data_list = data['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']
             data_item = data_list['contents'][0]['itemSectionRenderer']
-            # TODO: loop items to make sure the data are from the correct channel
+            channel_index = 'NA'
+            for index, item in enumerate(data_item['contents']):
+                if 'channelRenderer' in item.keys():
+                    channel_index = index
+                    break
+            if channel_index is 'NA':
+                raise Exception('unable to find a channel content from the results of the search query.')
             # extract info from the FIRST search result
-            # channelname = data_item['contents'][00]['channelRenderer']['title']['simpleText']
-            self.channelid = data_item['contents'][00]['channelRenderer']['channelId']
+            self.channelid = data_item['contents'][channel_index]['channelRenderer']['channelId']
             self.channellogo = 'https:' + \
-                               data_item['contents'][00]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
+                               data_item['contents'][channel_index]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
             return self.channelid, self.channellogo
         except Exception as err:
             print('there was an error while parsing the request: {}'.format(err))
@@ -132,21 +136,21 @@ class YoutubeHandlerNoAPI:
         # TODO: add proper exceptions
         try:
             find_data = re.findall(self.regex_dict['json_content'], req.text)
-            if not find_data[0]:
-                raise Exception
+            if not find_data:
+                raise Exception('unable to find a channel content from the results of the search query.')
             data = json.loads(find_data[0])
             data_tabs = data['contents']['twoColumnBrowseResultsRenderer']['tabs']
-            for i, tab in enumerate(data_tabs):
+            data_videos = {}
+            for index, tab in enumerate(data_tabs):
                 if 'Videos' in tab['tabRenderer']['title']:
-                    data_videos = data_tabs[i]
+                    data_videos = data_tabs[index]
                     break
-                data_videos = None
             if not data_videos:
-                print('videos section not found in get request.')
-                raise Exception
+                raise Exception('videos section not found in get request.')
             data_videos_list = data_videos['tabRenderer']['content']['sectionListRenderer']
             data_videos_item = data_videos_list['contents'][0]['itemSectionRenderer']
             data_videos_item_video = data_videos_item['contents'][0]['gridRenderer']['items'][0]['gridVideoRenderer']
+            # TODO: for channels with multiple streams, select the one with highest viewers
             # extract livestream URL from the first list item
             video = {
                 'title': data_videos_item_video['title']['runs'][0]['text'].encode('utf-8'),
