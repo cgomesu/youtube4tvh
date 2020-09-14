@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Purpose:      Save a Youtube live-stream to an M3U playlist
 # Author:       cgomesu
-# Date:         September 11th, 2020
+# Date:         September 14th, 2020
 # Disclaimer:   Use at your own discretion.
 #               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
@@ -112,7 +112,7 @@ def add_stream():
                 m3u_df = m3u.template()
         # Else, create a template data frame
         elif not args_cli['m3uinput']:
-            print('[INFO] Did not find an input M3U playlist.  '
+            print('[INFO] Did not find an input M3U playlist. '
                   'Generating an empty data frame...')
             m3u_df = m3u.template()
         # Append or update data frame
