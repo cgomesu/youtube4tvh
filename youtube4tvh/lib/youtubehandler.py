@@ -23,7 +23,7 @@ class YoutubeHandlerNoAPI:
 
     @staticmethod
     def write_debug(filename='debug.txt', content=None):
-        content = 'EMPTY' if not content else content.encode('utf-8')
+        content = 'NA' if not content else content.encode('utf-8')
         if not isinstance(content, str):
             content = str(content)
         with open(filename, 'w') as f:
@@ -107,7 +107,7 @@ class YoutubeHandlerNoAPI:
         except Exception as err:
             print('There was an error while parsing the request: {}'.format(err))
             # save req to a file for debugging
-            self.write_debug(filename='debug/debug_{}.txt'.format(self.channelname.replace(' ', '_')),
+            self.write_debug(filename='debug_{}.txt'.format(self.channelname.replace(' ', '_')),
                              content=req.text)
             return None, None
 
@@ -194,7 +194,7 @@ class YoutubeHandlerNoAPI:
         except Exception as err:
             print('There was an error while trying to retrieve the videoId from the live-stream: {}'.format(err))
             # save req to a file for debugging
-            self.write_debug(filename='debug/debug_' + self.channelname.replace(' ', '_') + '.txt',
+            self.write_debug(filename='debug_' + self.channelname.replace(' ', '_') + '.txt',
                              content=req.text)
             return None
 
