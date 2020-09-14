@@ -77,10 +77,12 @@ def add_stream():
                                     channelid=args_cli['channelid'],
                                     channelname=args_cli['channelname'],
                                     channellogo=args_cli['channellogo'])
+        print('[INFO] User entered a Youtube API key. Be mindful of your daily quota.')
     elif not args_cli['apikey']:
         youtube = YoutubeHandlerNoAPI(channelid=args_cli['channelid'],
                                       channelname=args_cli['channelname'],
                                       channellogo=args_cli['channellogo'])
+        print('[INFO] User did not enter a Youtube API key. Parsing data from YT website.')
     # Extract channel info
     if not args_cli['channelid']:
         print('[INFO] Retrieving channel info using the NAME provided...')
