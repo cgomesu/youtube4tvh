@@ -162,7 +162,9 @@ def update_stream():
         print('[WARNING] The list of channels is empty. Unable to continue in update mode. Bye!')
         exit()
     for channel in names:
+        print('##############################################')
         print('[INFO] Updating channel: {}...'.format(channel))
+        print('##############################################')
         args_cli['channelname'], args_cli['channelid'], args_cli['channellogo'] = channel, '', ''
         # TODO: improve the way errors are handled (retry then change request method)
         try:
@@ -173,11 +175,13 @@ def update_stream():
 
 
 def main():
-    if args_cli['mode'] == 'update':
-        update_stream()
-    elif args_cli['mode'] == 'add':
-        add_stream()
+    print('##############################################')
+    print('[INFO] Running Youtube4TVH in \'{}\' mode.'.format(args_cli['mode']))
+    print('##############################################')
+    add_stream() if args_cli['mode'] == 'add' else update_stream()
+    print('##############################################')
     print('[INFO] We are all done here. Bye!')
+    print('##############################################')
     exit()
 
 

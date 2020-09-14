@@ -18,8 +18,16 @@ class YoutubeHandlerNoAPI:
     """
     # a regex dictionary for parsing content from various GET requests
     regex_dict = {
-        'json_content': re.compile(r'(?P<json_data>\{\"responseContext\".+\})\;\n', re.IGNORECASE | re.MULTILINE),
+        'json_content': re.compile(r'(?P<json_data>\{\"responseContext\".+\})\;', re.IGNORECASE | re.MULTILINE),
     }
+
+    @staticmethod
+    def write_debug(filename='debug.txt', content=None):
+        content = 'EMPTY' if not content else content.encode('utf-8')
+        if not isinstance(content, str):
+            content = str(content)
+        with open(filename, 'w') as f:
+            f.write(content)
 
     def __init__(self, channelid, channelname, channellogo):
         self.channelname = channelname
@@ -64,9 +72,6 @@ class YoutubeHandlerNoAPI:
             print('Status code: {}'.format(req.status_code))
             if req.status_code is not 200:
                 raise requests.HTTPError
-            if req.encoding:
-                print('Encoding request to utf-8...')
-                req.encoding = 'utf-8'
         except requests.ConnectionError as err:
             print('There was a network problem: {}'.format(err))
             return None, None
@@ -83,21 +88,27 @@ class YoutubeHandlerNoAPI:
                 raise Exception('Unable to find the json content')
             data = json.loads(find_data[0])
             data_list = data['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']
-            data_item = data_list['contents'][0]['itemSectionRenderer']
-            channel_index = 'NA'
-            for index, item in enumerate(data_item['contents']):
-                if 'channelRenderer' in item.keys():
-                    channel_index = index
-                    break
-            if channel_index is 'NA':
-                raise Exception('Unable to find a channel content from the results of the search query.')
+            # skip non-channel content, like ads
+            section_index, item_index = 'NA', 'NA'
+            for i, section in enumerate(data_list['contents']):
+                if 'itemSectionRenderer' in section.keys():
+                    for j, item in enumerate(section['itemSectionRenderer']['contents']):
+                        if 'channelRenderer' in item.keys():
+                            section_index, item_index = i, j
+                            break
+            if section_index is 'NA' or item_index is 'NA':
+                raise Exception('Unable to find content from the results of the search query.')
             # extract info from the FIRST search result
-            self.channelid = data_item['contents'][channel_index]['channelRenderer']['channelId']
+            data_item = data_list['contents'][section_index]['itemSectionRenderer']
+            self.channelid = data_item['contents'][item_index]['channelRenderer']['channelId']
             self.channellogo = 'https:' + \
-                               data_item['contents'][channel_index]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
+                               data_item['contents'][item_index]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
             return self.channelid, self.channellogo
         except Exception as err:
             print('There was an error while parsing the request: {}'.format(err))
+            # save req to a file for debugging
+            self.write_debug(filename='debug/debug_{}.txt'.format(self.channelname.replace(' ', '_')),
+                             content=req.text)
             return None, None
 
     def find_stream(self):
@@ -120,9 +131,6 @@ class YoutubeHandlerNoAPI:
             print('Status code: {}'.format(req.status_code))
             if req.status_code is not 200:
                 raise requests.HTTPError
-            if req.encoding:
-                print('Encoding request to utf-8...')
-                req.encoding = 'utf-8'
         except requests.ConnectionError as err:
             print('There was a network problem: {}'.format(err))
             return None, None
@@ -130,13 +138,13 @@ class YoutubeHandlerNoAPI:
             print('The connection timed-out.')
             return None, None
         except requests.HTTPError:
-            print('The URL returned a bad HTTP code (not 200). check the URL.')
+            print('The URL returned a bad HTTP code (not 200). Check the URL.')
             return None, None
         print('Parsing request...')
         try:
             find_data = re.findall(self.regex_dict['json_content'], req.text)
             if not find_data:
-                raise Exception('Unable to find content from the results of the search query.')
+                raise Exception('Unable to find json content from the results of the search query.')
             data = json.loads(find_data[0])
             data_tabs = data['contents']['twoColumnBrowseResultsRenderer']['tabs']
             data_videos = {}
@@ -158,9 +166,13 @@ class YoutubeHandlerNoAPI:
                 if 'viewCountText' in item['gridVideoRenderer'].keys():
                     # extract only digits from viewers count
                     current_index = index
-                    viewer_digits = re.match(r'\d*',
-                                             item['gridVideoRenderer']['viewCountText']['runs'][0]['text'].replace(',',
-                                                                                                                   ''))
+                    viewer_digits = re.match(
+                        r'\d*',
+                        item['gridVideoRenderer']['viewCountText']['runs'][0]['text'].replace(',', '')
+                    ) if 'runs' in item['gridVideoRenderer']['viewCountText'].keys() else re.match(
+                        r'\d*',
+                        item['gridVideoRenderer']['viewCountText']['simpleText'].replace(',', '')
+                    )
                     current_viewers = int(viewer_digits.group()) if viewer_digits.group() else 0
                     if current_viewers > highest_viewers:
                         highest_viewers = current_viewers
@@ -181,6 +193,9 @@ class YoutubeHandlerNoAPI:
             return video
         except Exception as err:
             print('There was an error while trying to retrieve the videoId from the live-stream: {}'.format(err))
+            # save req to a file for debugging
+            self.write_debug(filename='debug/debug_' + self.channelname.replace(' ', '_') + '.txt',
+                             content=req.text)
             return None
 
 
