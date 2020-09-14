@@ -1,31 +1,33 @@
 # Youtube 4 tvh
-Youtube4tvh is a Python CLI program that uses Youtube API to find live-streams and create (or update) m3u playlists for a TVHeadend server (TVH; https://github.com/tvheadend/tvheadend). The m3u file follows IPTV conventions that allow a TVH server to automatically create an IPTV network with them, and each stream is piped into TVH via a Streamlink (https://streamlink.github.io/) shell script.
+Youtube4tvh is a Python CLI program to find Youtube live-streams and create (or update) m3u playlists for a TVHeadend server (TVH; https://github.com/tvheadend/tvheadend). The m3u file follows IPTV conventions that allow a TVH server to automatically create an IPTV network with them, and each stream is piped into TVH via a Streamlink (https://streamlink.github.io/) shell script.
 
-This utility is part of a guide I wrote on how to create an IPTV network in a TVH server composed entirely of Youtube live-streams.  You can read about it on my blog post (https://cgomesu.com/blog/Youtube-as-IPTV-with-TVH/)
+This utility is part of a guide I wrote on how to create an IPTV network in a TVH server composed entirely of Youtube live-streams.  You can read about it on my blog post (https://cgomesu.com/blog/Youtube-as-IPTV-with-TVH/).
 
 
 # Status
 ```diff
 - Working
-- Last checked on: September 7th 2020
+- Last checked on: September 14th 2020
 ```
 
 
 # Modular structure
 
-![TVH layout](img/modular_structure.jpg)
+![TVH layout](img/modular_structure_v011.jpg)
 
 
 # Requirements
-- Python 2.7 or higher
+- Python 2.7 or higher (but recommend using 3.5+)
 
 - Python packages: Pandas (pandas) and Requests (requests) is all you will need to install (see requirements.txt)
-
-- A valid Youtube API key (https://developers.google.com/youtube/v3/getting-started). Be mindful of your request quota daily limits. You can check your API activity at https://console.cloud.google.com/apis/dashboard and will get a "quotaExceeded" msg when you've reached yours. API quotas are applied per project and you can create multiple projects, if necessary. \[For reference, each channel add/update uses 200 quota points (see `search` resource cost in the [Quota Calculator](https://developers.google.com/youtube/v3/determine_quota_cost)) and because the daily limit is 10k, I suggest using one API key for up to 50 channels (or similarly, update a .m3u file with 25 channels twice a day, or a .m3u file with 10 channels five times a day, and so on). Daily quotas reset at **00:00 *Pacific Time***, so configure your cron jobs accordingly.\] 
 
 - A TVH server to feed the list to clients as an IPTV network
 
 - Streamlink to pipe the stream data into a TVH server
+
+
+# Optional
+- A valid Youtube API key (https://developers.google.com/youtube/v3/getting-started). Be mindful of your request quota daily limits. You can check your API activity at https://console.cloud.google.com/apis/dashboard and will get a "quotaExceeded" msg when you've reached yours. API quotas are applied per project and you can create multiple projects, if necessary. \[For reference, each channel add/update uses 200 quota points (see `search` resource cost in the [Quota Calculator](https://developers.google.com/youtube/v3/determine_quota_cost)) and because the daily limit is 10k, I suggest using one API key for up to 50 channels (or similarly, update a .m3u file with 25 channels twice a day, or a .m3u file with 10 channels five times a day, and so on). Daily quotas reset at **00:00 *Pacific Time***, so configure your cron jobs accordingly.\]
 
 
 # Suggested TVH client-server layout
@@ -53,10 +55,10 @@ cd youtube4tvh
 pip install .
 # Test the program
 cd youtube4tvh
-python main.py --apikey=YOURKEY --channelname="DW News"
+python main.py --channelname="DW News"
 # Now, there should be an output.m3u playlist on the same folder with the DW News channel live-stream.
 # If you run into permission issues, then 'sudo chown -R YOURUSER:sudo /opt/youtube4tvh', changing YOURSER for your sudo username.
-# If TVH is unable to run streamlink.sh, try 'sudo chmod 0777 /opt/youtube4tvh/streamlink.sh'.
+# If TVH is unable to run streamlink.sh, try 'sudo chmod +x /opt/youtube4tvh/streamlink.sh'.
 ```
 
 
@@ -101,7 +103,9 @@ optional arguments:
 
 
 # Examples
-- Create a new youtube.m3u playlist with the live-stream from "France 24 English":
+(In the examples that follow, I'll use an API key to request data from Youtube.  If you don't have one, just omit it from the arguments.)
+
+- Create a new youtube.m3u playlist with the live-stream from "France 24 English" using an API key:
 ```diff
 python main.py --apikey=YOURKEY --m3uoutput=youtube.m3u --channelname="France 24 English"
 
