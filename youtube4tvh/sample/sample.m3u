@@ -1,0 +1,81 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="UCuiLR4p6wQ3xLEm15pEn1Xw" tvg-name="Record News" tvg-language="Portuguese" tvg-country="BR" tvg-logo="https://yt3.ggpht.com/-D1dwQSH7PJM/AAAAAAAAAAI/AAAAAAAAAAA/zYbytGb1erM/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",Record News
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=RpDkRX0cDAY
+#EXTINF:-1 tvg-id="UCj6PcyLvpnIRT_2W_mwa9Aw" tvg-name="Todo Noticia" tvg-language="Spanish" tvg-country="AG" tvg-logo="https://yt3.ggpht.com/-3alNghFOor4/AAAAAAAAAAI/AAAAAAAAAAA/S7aGmIKGJPE/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",Todo Noticia
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=wHn1_QVoXGM
+#EXTINF:-1 tvg-id="UCba3hpU7EFBSk817y9qZkiA" tvg-name="La Nacion Plus" tvg-language="Spanish" tvg-country="AG" tvg-logo="https://yt3.ggpht.com/-h6rITlQqBh8/AAAAAAAAAAI/AAAAAAAAAAA/ESMboDbwMj4/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",La Nacion Plus
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=kliThQn14hc
+#EXTINF:-1 tvg-id="UCFgk2Q2mVO1BklRQhSv6p0w" tvg-name="C5N" tvg-language="Spanish" tvg-country="AG" tvg-logo="https://yt3.ggpht.com/-Y_vJd07LNl0/AAAAAAAAAAI/AAAAAAAAAAA/PJ71Y7cHu7Q/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",C5N
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=Jzk1VTPH8q8
+#EXTINF:-1 tvg-id="UCFxHplbcoJK9m70c4VyTIxg" tvg-name="Milenio" tvg-language="Spanish" tvg-country="MX" tvg-logo="https://yt3.ggpht.com/-Wlpzv7_We7I/AAAAAAAAAAI/AAAAAAAAAAA/1lgm2P9thYQ/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Entertainment",Milenio
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=Wi0pEULGi5I
+#EXTINF:-1 tvg-id="UCVgO39Bk5sMo66-6o6Spn6Q" tvg-name="ABC News AU" tvg-language="English" tvg-country="AU" tvg-logo="https://yt3.ggpht.com/-Eh3AwGhwPeI/AAAAAAAAAAI/AAAAAAAAAAA/QomvTf2lg_s/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",ABC News AU
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=1uWFIT-xSJU
+#EXTINF:-1 tvg-id="UCoMdktPbSTixAyNGwb-UYkQ" tvg-name="Sky News" tvg-language="English" tvg-country="UK" tvg-logo="https://yt3.ggpht.com/-uYnyeu0wFpQ/AAAAAAAAAAI/AAAAAAAAAAA/VU2Ct3J_ZQw/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",Sky News
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=9Auq9mYxFEE
+#EXTINF:-1 tvg-id="UCNye-wNBqNL5ZzHSJj3l8Bg" tvg-name="Al Jazeera English" tvg-language="English" tvg-country="QA" tvg-logo="https://yt3.ggpht.com/-8IFpTckNBOQ/AAAAAAAAAAI/AAAAAAAAAAA/D3as0FRtFfo/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",Al Jazeera English
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=_dsWF2prkR8
+#EXTINF:-1 tvg-id="UCQfwfsi5VrQ8yKZ-UWmAEFg" tvg-name="France 24 English" tvg-language="English" tvg-country="FR" tvg-logo="https://yt3.ggpht.com/-Qc-MGBq90YE/AAAAAAAAAAI/AAAAAAAAAAA/AAmrwHX7No0/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",France 24 English
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=FUnJzFT2i84
+#EXTINF:-1 tvg-id="UCCCPCZNChQdGa9EkATeye4g" tvg-name="France 24" tvg-language="French" tvg-country="FR" tvg-logo="https://yt3.ggpht.com/-PwEAmziM9Nc/AAAAAAAAAAI/AAAAAAAAAAA/AF59tDEC0L4/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",France 24
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=djXROrzZ9NI
+#EXTINF:-1 tvg-id="UCknLrEdhRCp1aegoMqRaCZg" tvg-name="DW English" tvg-language="English" tvg-country="DE" tvg-logo="https://yt3.ggpht.com/-9Ir29NdKHLU/AAAAAAAAAAI/AAAAAAAAAAA/zRjtXkXQptw/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",DW English
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=NvqKZHpKs-g
+#EXTINF:-1 tvg-id="UCMIgOXM2JEQ2Pv2d0_PVfcg" tvg-name="DW Deutsch" tvg-language="German" tvg-country="DE" tvg-logo="https://yt3.ggpht.com/--ZKsQsVYm2c/AAAAAAAAAAI/AAAAAAAAAAA/f0s4KdtP2Cg/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",DW Deutsch
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=pPgGsAcEEZI
+#EXTINF:-1 tvg-id="UCSrZ3UV4jOidv8ppoVuvW9Q" tvg-name="Euronews English" tvg-language="English" tvg-country="FR" tvg-logo="https://yt3.ggpht.com/-E6JZH-KyyCc/AAAAAAAAAAI/AAAAAAAAAAA/fqL-p-2Wk40/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",Euronews English
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=4fEVwKODCVo
+#EXTINF:-1 tvg-id="UCyoGb3SMlTlB8CLGVH4c8Rw" tvg-name="Euronews Spanish" tvg-language="Spanish" tvg-country="FR" tvg-logo="https://yt3.ggpht.com/-ZIUpdODVQio/AAAAAAAAAAI/AAAAAAAAAAA/xt6SLv_Wocs/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",Euronews Spanish
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=Sz4E0PuRefY
+#EXTINF:-1 tvg-id="UCUmEPYxmnyQDeRUcFkslmQw" tvg-name="Euronews Portuguese" tvg-language="Portuguese" tvg-country="FR" tvg-logo="https://yt3.ggpht.com/-SImIgbOo26c/AAAAAAAAAAI/AAAAAAAAAAA/Mk99X7uTd90/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",Euronews Portuguese
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=BbAh72tYnbE
+#EXTINF:-1 tvg-id="UCpwvZwUam-URkxB7g4USKpg" tvg-name="RT News" tvg-language="English" tvg-country="RU" tvg-logo="https://yt3.ggpht.com/-Kctadlnnczo/AAAAAAAAAAI/AAAAAAAAAAA/5NdDPcu1rz8/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",RT News
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=NvCSr7qzAAM
+#EXTINF:-1 tvg-id="UC83jt4dlz1Gjl58fzQrrKZg" tvg-name="CNA" tvg-language="English" tvg-country="SG" tvg-logo="https://yt3.ggpht.com/-wh5rGr3HSXs/AAAAAAAAAAI/AAAAAAAAAAA/5rTU6pVkmIY/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",CNA
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=XWq5kBlakcQ
+#EXTINF:-1 tvg-id="UCUMZ7gohGI9HcU9VNsr2FJQ" tvg-name="Bloomberg Global News" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-VEB545Y1H1M/AAAAAAAAAAI/AAAAAAAAAAA/trwfqEkQLEU/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="News",Bloomberg Global News
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=dp8PhLsUcFE
+#EXTINF:-1 tvg-id="UCRuyAVeVd7oUwh0LWmxxBBQ" tvg-name="earthTV" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-VDIO_3dORtY/AAAAAAAAAAI/AAAAAAAAAAA/7iTvSXVtaeY/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",earthTV
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=JlqrHo-Rsi0
+#EXTINF:-1 tvg-id="UCMpn1qLudF-zb4M4bqxLIbw" tvg-name="I Love You Venice" tvg-language="English" tvg-country="IT" tvg-logo="https://yt3.ggpht.com/-AC6xt363SIw/AAAAAAAAAAI/AAAAAAAAAAA/xrVelt0tLr8/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",I Love You Venice
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=ph1vpnYIxJk
+#EXTINF:-1 tvg-id="UCZXZQxS3d6NpR-eH_gdDwYA" tvg-name="Cornell Lab Bird Cams" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-zf_iZiCFpms/AAAAAAAAAAI/AAAAAAAAAAA/8S8YAFyjKPI/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",Cornell Lab Bird Cams
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=N609loYkFJo
+#EXTINF:-1 tvg-id="UCnM5iMGiKsZg-iOlIO2ZkdQ" tvg-name="Monterey Bay Aquarium" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-7A28L7tMrOE/AAAAAAAAAAI/AAAAAAAAAAA/7UNZZJVhTK0/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",Monterey Bay Aquarium
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=28cnxCbix0k
+#EXTINF:-1 tvg-id="UCSyg9cb3Iq-NtlbxqNB9wGw" tvg-name="Explore Oceans" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-eZx14bu5Zqs/AAAAAAAAAAI/AAAAAAAAAAA/QA0DrnobHl8/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",Explore Oceans
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=DY5RYp4sxYc
+#EXTINF:-1 tvg-id="UC-2KSeUU5SMCX6XLRD-AEvw" tvg-name="Explore Nature" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-OlsSsWSwX5A/AAAAAAAAAAI/AAAAAAAAAAA/zTUqpTIAcLA/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",Explore Nature
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=IcWTPFnqOLo
+#EXTINF:-1 tvg-id="UC8NnosPOvXnm0O1u5YnLQiw" tvg-name="Explore Birds Bats Bees" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-hThypUGAR_w/AAAAAAAAAAI/AAAAAAAAAAA/n-lqi_3bnWg/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",Explore Birds Bats Bees
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=UmclL6funN8
+#EXTINF:-1 tvg-id="UC2Sk0aXLq3ADkH_USGPKT_Q" tvg-name="Explore Bears and Bison" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-lg8dMB86qtE/AAAAAAAAAAI/AAAAAAAAAAA/huY2aa0YNqM/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",Explore Bears and Bison
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=4tjiHSaGXUQ
+#EXTINF:-1 tvg-id="UCiGOIXjFqy5_mUNxQNOMfHw" tvg-name="Explore Africa" tvg-language="English" tvg-country="SA" tvg-logo="https://yt3.ggpht.com/-M9sZBFeG7mU/AAAAAAAAAAI/AAAAAAAAAAA/R9ObmdSZ_sU/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",Explore Africa
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=48MFrf5ADp8
+#EXTINF:-1 tvg-id="UCMWAvusUV2eeVVHZDKiMKrw" tvg-name="Explore Farm Life" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-zbKtjLvrTUg/AAAAAAAAAAI/AAAAAAAAAAA/ZyZHKq4xuUE/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",Explore Farm Life
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=tPdKmQyh6W8
+#EXTINF:-1 tvg-id="UCWl9BI3rn0-YVCuWS_g2FUw" tvg-name="American Eagle Foundation" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-LdHefKllhDU/AAAAAAAAAAI/AAAAAAAAAAA/lQs6u6vZTog/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",American Eagle Foundation
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=jpU2Ga0tiPs
+#EXTINF:-1 tvg-id="UCLA_DiR1FfKNvjuUpBHmylQ" tvg-name="NASA TV" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-D7tNppml7sw/AAAAAAAAAAI/AAAAAAAAAAA/65fuq-FHf3g/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Space",NASA TV
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=21X5lGlDOfg
+#EXTINF:-1 tvg-id="UCakgsb0w7QB0VHdnCc-OVEA" tvg-name="Space Videos" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-ZIDgz6kTXqA/AAAAAAAAAAI/AAAAAAAAAAA/pAL-Ix35Oe8/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Space",Space Videos
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=EEIk7gwjgIM
+#EXTINF:-1 tvg-id="UC9pYOJPB5UYlMlGKKZWo-Bw" tvg-name="Space and the Universe HD" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-w3dKudzwZXY/AAAAAAAAAAI/AAAAAAAAAAA/cq5EqhRVDRI/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Space",Space and the Universe HD
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=SEgMI08GwtQ
+#EXTINF:-1 tvg-id="UCi3T_esus8Sr9I-3W5teVQQ" tvg-name="VolcanoVerse" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-HspmOotrJJM/AAAAAAAAAAI/AAAAAAAAAAA/FxkIwBNbqF4/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",VolcanoVerse
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=YeoRx59dZkc
+#EXTINF:-1 tvg-id="UCP8wWzfUcral_E6iNMdIdKg" tvg-name="RailWay" tvg-language="" tvg-country="BR" tvg-logo="https://yt3.ggpht.com/-z9xnu14tjYs/AAAAAAAAAAI/AAAAAAAAAAA/qXqki654zLo/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",RailWay
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=X7Yco4WJ51Y
+#EXTINF:-1 tvg-id="UCj-Xm8j6WBgKY8OG7s9r2vQ" tvg-name="RailCowGirl" tvg-language="" tvg-country="BR" tvg-logo="https://yt3.ggpht.com/-j6tw81EEntw/AAAAAAAAAAI/AAAAAAAAAAA/0VpDLybsXhc/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Webcam",RailCowGirl
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=ZHgXfhiDIIM
+#EXTINF:-1 tvg-id="UCDGiCfCZIV5phsoGiPwIcyQ" tvg-name="Roylab Stats" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-rtRH85V-8mA/AAAAAAAAAAI/AAAAAAAAAAA/fejPuW7PCkU/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Data",Roylab Stats
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=NMre6IAAAiU
+#EXTINF:-1 tvg-id="UCJhjE7wbdYAae1G25m0tHAA" tvg-name="BGM channel - Cafe Music" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-J7GRtoYtWXk/AAAAAAAAAAI/AAAAAAAAAAA/487XVrL-Z8s/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Radio",BGM channel - Cafe Music
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=Dx5qFachd3A
+#EXTINF:-1 tvg-id="UCQINXHZqCU5i06HzxRkujfg" tvg-name="BGM channel" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-qE-AGNTtFbg/AAAAAAAAAAI/AAAAAAAAAAA/8SGSrGsVkCQ/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Radio",BGM channel
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=fEvM-OUbaKs
+#EXTINF:-1 tvg-id="UCha0QKR45iw7FCUQ3-1PnhQ" tvg-name="Cafe del Mar" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-YJVGM_ODglA/AAAAAAAAAAI/AAAAAAAAAAA/vmkJoQGaXsw/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Radio",Cafe del Mar
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=F1kzzymSguE
+#EXTINF:-1 tvg-id="UCzcn2eAUHZ2Ba3x7hZF6q2w" tvg-name="Stay See" tvg-language="English" tvg-country="US" tvg-logo="https://yt3.ggpht.com/-qrpdI6uFUSg/AAAAAAAAAAI/AAAAAAAAAAA/spjpf2uaLuM/s800-c-k-no-mo-rj-c0xffffff/photo.jpg" tvg-url="" group-title="Radio",Stay See
+pipe:///bin/bash /opt/youtube4tvh/streamlink.sh https://www.youtube.com/watch?v=53HsGl87N2c
