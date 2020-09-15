@@ -19,6 +19,7 @@ class YoutubeHandlerNoAPI:
     # a regex dictionary for parsing content from various GET requests
     regex_dict = {
         'json_content': re.compile(r'(?P<json_data>\{\"responseContext\".+\})\;', re.IGNORECASE | re.MULTILINE),
+        'viewer_digits': re.compile(r'\d*'),
     }
 
     @staticmethod
@@ -167,10 +168,10 @@ class YoutubeHandlerNoAPI:
                     # extract only digits from viewers count
                     current_index = index
                     viewer_digits = re.match(
-                        r'\d*',
+                        self.regex_dict['viewer_digits'],
                         item['gridVideoRenderer']['viewCountText']['runs'][0]['text'].replace(',', '')
                     ) if 'runs' in item['gridVideoRenderer']['viewCountText'].keys() else re.match(
-                        r'\d*',
+                        self.regex_dict['viewer_digits'],
                         item['gridVideoRenderer']['viewCountText']['simpleText'].replace(',', '')
                     )
                     current_viewers = int(viewer_digits.group()) if viewer_digits.group() else 0
