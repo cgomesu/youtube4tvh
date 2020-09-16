@@ -118,7 +118,8 @@ class YoutubeHandlerNoAPI:
             'view': 2,
             'live_view': 501,
         }
-        print('Requesting livestreams from channel \'{}\' with id {}...'.format(self.channelname, self.channelid))
+        print('Requesting livestreams from channel \'{}\' with id \'{}\'...'.format(self.channelname,
+                                                                                    self.channelid))
         try:
             req = self.session.get(url='{}://{}.{}{}{}{}'.format(self.req_url['protocol'],
                                                                  self.req_url['subdomain'],
