@@ -103,6 +103,7 @@ def add_stream():
             'url': stream['url']
         }
         # Parse existing input m3u file
+        m3u_df = []
         if args_cli['m3uinput']:
             print('[INFO] User provided an input M3U playlist at {}.  '
                   'Will try to parse it and create a data frame...'.format(args_cli['m3uinput']))
@@ -112,8 +113,7 @@ def add_stream():
                 m3u_df = m3u.template()
         # Else, create a template data frame
         elif not args_cli['m3uinput']:
-            print('[INFO] Did not find an input M3U playlist. '
-                  'Generating an empty data frame...')
+            print('[INFO] Did not find an input M3U playlist. Generating an empty data frame...')
             m3u_df = m3u.template()
         # Append or update data frame
         write_df = True
@@ -128,7 +128,7 @@ def add_stream():
                       'Updating its url in the data frame...'.format(args_cli['m3uinput']))
                 m3u_df = m3u.update(m3u_df, **m3u_parameters)
             elif not chbool:
-                print('[INGO] Did not find the same channel on {}.'.format(args_cli['m3uinput']))
+                print('[INFO] Did not find the same channel on {}.'.format(args_cli['m3uinput']))
                 if args_cli['mode'] == 'add':
                     print('[INFO] Will append the stream info to the data frame...')
                     m3u_df = m3u.append(m3u_df, **m3u_parameters)
