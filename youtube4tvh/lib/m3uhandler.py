@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Purpose:      Save a Youtube live-stream to an M3U playlist
 # Author:       cgomesu
-# Date:         May 1st, 2020
+# Date:         September 16th, 2020
 # Disclaimer:   Use at your own discretion.
 #               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
@@ -332,9 +332,7 @@ class M3uHandler:
             dataframe.at[target_index[0], "tvg-url"] = data["tvg-url"]
             dataframe.at[target_index[0], "group-title"] = data["group-title"]
             dataframe.at[target_index[0], "stream-url"] = data["stream-url"]
-            boolean = True
-            return dataframe, boolean
+            return dataframe
         except Exception as err:
             print("There was an error UPDATING the data frame. Error: {}".format(err))
-            boolean = False
-            return dataframe, boolean
+            return dataframe

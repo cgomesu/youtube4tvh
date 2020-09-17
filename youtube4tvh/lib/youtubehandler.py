@@ -19,6 +19,7 @@ class YoutubeHandlerNoAPI:
     # a regex dictionary for parsing content from various GET requests
     regex_dict = {
         'json_content': re.compile(r'(?P<json_data>\{\"responseContext\".+\})\;', re.IGNORECASE | re.MULTILINE),
+        'viewer_digits': re.compile(r'\d*'),
     }
 
     @staticmethod
@@ -101,8 +102,8 @@ class YoutubeHandlerNoAPI:
             # extract info from the FIRST search result
             data_item = data_list['contents'][section_index]['itemSectionRenderer']
             self.channelid = data_item['contents'][item_index]['channelRenderer']['channelId']
-            self.channellogo = 'https:' + \
-                               data_item['contents'][item_index]['channelRenderer']['thumbnail']['thumbnails'][0]['url']
+            self.channellogo = 'https:{}'.format(
+                data_item['contents'][item_index]['channelRenderer']['thumbnail']['thumbnails'][0]['url'])
             return self.channelid, self.channellogo
         except Exception as err:
             print('There was an error while parsing the request: {}'.format(err))
@@ -117,7 +118,8 @@ class YoutubeHandlerNoAPI:
             'view': 2,
             'live_view': 501,
         }
-        print('Requesting livestreams from channel \'{}\' with id {}...'.format(self.channelname, self.channelid))
+        print('Requesting livestreams from channel \'{}\' with id \'{}\'...'.format(self.channelname,
+                                                                                    self.channelid))
         try:
             req = self.session.get(url='{}://{}.{}{}{}{}'.format(self.req_url['protocol'],
                                                                  self.req_url['subdomain'],
@@ -160,30 +162,29 @@ class YoutubeHandlerNoAPI:
             # TODO: make sure the video is a livestream and not a VOD
             # selection method for channels with multiple livestreams
             # select livestream with the highest number of viewers
-            highest_viewers = -1
-            highest_index = 0
+            highest_viewers, highest_index = -1, 0
             for index, item in enumerate(data_videos_item_video):
                 if 'viewCountText' in item['gridVideoRenderer'].keys():
                     # extract only digits from viewers count
                     current_index = index
                     viewer_digits = re.match(
-                        r'\d*',
+                        self.regex_dict['viewer_digits'],
                         item['gridVideoRenderer']['viewCountText']['runs'][0]['text'].replace(',', '')
                     ) if 'runs' in item['gridVideoRenderer']['viewCountText'].keys() else re.match(
-                        r'\d*',
+                        self.regex_dict['viewer_digits'],
                         item['gridVideoRenderer']['viewCountText']['simpleText'].replace(',', '')
                     )
+                    # assume 0 viewer if unable to find digits
                     current_viewers = int(viewer_digits.group()) if viewer_digits.group() else 0
                     if current_viewers > highest_viewers:
-                        highest_viewers = current_viewers
-                        highest_index = current_index
+                        highest_viewers, highest_index = current_viewers, current_index
             data_videos_item_video = data_videos_item_video[highest_index]['gridVideoRenderer']
             # extract livestream URL from the video with the highest number of viewers or the first found (default)
             video = {
                 'title': data_videos_item_video['title']['accessibility']['accessibilityData']['label'].encode('utf-8'),
                 'description': 'NA',
                 'id': data_videos_item_video['videoId'],
-                'url': 'https://www.youtube.com/watch?v=' + data_videos_item_video['videoId'],
+                'url': 'https://www.youtube.com/watch?v={}'.format(data_videos_item_video['videoId']),
                 'date': 'NA',
                 'region': 'NA',
             }
@@ -194,7 +195,7 @@ class YoutubeHandlerNoAPI:
         except Exception as err:
             print('There was an error while trying to retrieve the videoId from the live-stream: {}'.format(err))
             # save req to a file for debugging
-            self.write_debug(filename='debug_' + self.channelname.replace(' ', '_') + '.txt',
+            self.write_debug(filename='debug_{}.txt'.format(self.channelname.replace(' ', '_')),
                              content=req.text)
             return None
 
