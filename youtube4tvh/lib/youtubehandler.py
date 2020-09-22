@@ -22,14 +22,6 @@ class YoutubeHandlerNoAPI:
         'viewer_digits': re.compile(r'\d*'),
     }
 
-    @staticmethod
-    def write_debug(filename='debug.txt', content=None):
-        content = 'NA' if not content else content.encode('utf-8')
-        if not isinstance(content, str):
-            content = str(content)
-        with open(filename, 'w') as f:
-            f.write(content)
-
     def __init__(self, channelid, channelname, channellogo):
         self.channelname = channelname
         self.channelid = channelid
@@ -118,9 +110,6 @@ class YoutubeHandlerNoAPI:
             return self.channelid, self.channellogo
         except Exception as err:
             print('There was an error while parsing the request: {}'.format(err))
-            # save req to a file for debugging
-            self.write_debug(filename='debug_{}.txt'.format(self.channelname.replace(' ', '_')),
-                             content=req.text)
             return None, None
 
     def find_stream(self):
@@ -161,21 +150,26 @@ class YoutubeHandlerNoAPI:
             data = json.loads(find_data[0])
             data_tabs = data['contents']['twoColumnBrowseResultsRenderer']['tabs']
             data_videos = {}
-            for index, tab in enumerate(data_tabs):
-                if 'Videos' in tab['tabRenderer']['title']:
-                    data_videos = data_tabs[index]
-                    break
+            for i, tab in enumerate(data_tabs):
+                if 'tabRenderer' in tab.keys():
+                    tab_title = tab['tabRenderer']['title']
+                    if 'Videos' in tab_title:
+                        data_videos = data_tabs[i]
+                        break
             if not data_videos:
                 raise Exception('Videos section not found in get request.')
             data_videos_list = data_videos['tabRenderer']['content']['sectionListRenderer']
             data_videos_item = data_videos_list['contents'][0]['itemSectionRenderer']
             data_videos_item_video = data_videos_item['contents'][0]['gridRenderer']['items']
-            # TODO: make sure the video is a livestream and not a VOD
             # selection method for channels with multiple livestreams
             # select livestream with the highest number of viewers
             highest_viewers, highest_index = -1, 0
+            found_live = False
             for index, item in enumerate(data_videos_item_video):
-                if 'viewCountText' in item['gridVideoRenderer'].keys():
+                # video has a view counter and is not a VOD
+                if 'viewCountText' in item['gridVideoRenderer'].keys() \
+                        and 'publishedTimeText' not in item['gridVideoRenderer'].keys():
+                    found_live = True
                     # extract only digits from viewers count
                     current_index = index
                     viewer_digits = re.match(
@@ -189,6 +183,8 @@ class YoutubeHandlerNoAPI:
                     current_viewers = int(viewer_digits.group()) if viewer_digits.group() else 0
                     if current_viewers > highest_viewers:
                         highest_viewers, highest_index = current_viewers, current_index
+            if not found_live:
+                raise Exception('Unable to find a livestream for this channel right now.')
             data_videos_item_video = data_videos_item_video[highest_index]['gridVideoRenderer']
             # extract livestream URL from the video with the highest number of viewers or the first found (default)
             video = {
@@ -205,9 +201,6 @@ class YoutubeHandlerNoAPI:
             return video
         except Exception as err:
             print('There was an error while trying to retrieve the videoId from the live-stream: {}'.format(err))
-            # save req to a file for debugging
-            self.write_debug(filename='debug_{}.txt'.format(self.channelname.replace(' ', '_')),
-                             content=req.text)
             return None
 
 
