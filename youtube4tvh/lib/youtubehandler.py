@@ -102,8 +102,19 @@ class YoutubeHandlerNoAPI:
             # extract info from the FIRST search result
             data_item = data_list['contents'][section_index]['itemSectionRenderer']
             self.channelid = data_item['contents'][item_index]['channelRenderer']['channelId']
-            self.channellogo = 'https:{}'.format(
-                data_item['contents'][item_index]['channelRenderer']['thumbnail']['thumbnails'][0]['url'])
+            # get thumbnail with highest quality
+            thumb_index = 0
+            if 'thumbnails' in data_item['contents'][item_index]['channelRenderer']['thumbnail'].keys():
+                highest_width = -1
+                for k, thumb in enumerate(data_item['contents'][item_index]['channelRenderer']['thumbnail']['thumbnails']):
+                    current_width = thumb['width']
+                    if current_width > highest_width:
+                        highest_width = current_width
+                        thumb_index = k
+            data_item_thumb = data_item['contents'][item_index]['channelRenderer']['thumbnail']['thumbnails'][thumb_index]
+            self.channellogo = data_item_thumb['url'] if 'https' in data_item_thumb['url'] else 'https:{}'.format(
+                data_item_thumb['url']
+            )
             return self.channelid, self.channellogo
         except Exception as err:
             print('There was an error while parsing the request: {}'.format(err))
