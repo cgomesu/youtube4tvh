@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Purpose:      Save a Youtube live-stream to an M3U playlist
 # Author:       cgomesu
-# Date:         September 14th, 2020
+# Date:         September 24th, 2020
 # Disclaimer:   Use at your own discretion.
 #               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
@@ -95,14 +95,12 @@ class YoutubeHandlerNoAPI:
             data_item = data_list['contents'][section_index]['itemSectionRenderer']
             self.channelid = data_item['contents'][item_index]['channelRenderer']['channelId']
             # get thumbnail with highest quality
-            thumb_index = 0
+            highest_width, thumb_index = -1, 0
             if 'thumbnails' in data_item['contents'][item_index]['channelRenderer']['thumbnail'].keys():
-                highest_width = -1
                 for k, thumb in enumerate(data_item['contents'][item_index]['channelRenderer']['thumbnail']['thumbnails']):
                     current_width = thumb['width']
                     if current_width > highest_width:
-                        highest_width = current_width
-                        thumb_index = k
+                        highest_width, thumb_index = current_width, k
             data_item_thumb = data_item['contents'][item_index]['channelRenderer']['thumbnail']['thumbnails'][thumb_index]
             self.channellogo = data_item_thumb['url'] if 'https' in data_item_thumb['url'] else 'https:{}'.format(
                 data_item_thumb['url']
@@ -165,13 +163,12 @@ class YoutubeHandlerNoAPI:
             # select livestream with the highest number of viewers
             highest_viewers, highest_index = -1, 0
             found_live = False
-            for index, item in enumerate(data_videos_item_video):
+            for j, item in enumerate(data_videos_item_video):
                 # video has a view counter and is not a VOD
                 if 'viewCountText' in item['gridVideoRenderer'].keys() \
                         and 'publishedTimeText' not in item['gridVideoRenderer'].keys():
                     found_live = True
                     # extract only digits from viewers count
-                    current_index = index
                     viewer_digits = re.match(
                         self.regex_dict['viewer_digits'],
                         item['gridVideoRenderer']['viewCountText']['runs'][0]['text'].replace(',', '')
@@ -182,7 +179,7 @@ class YoutubeHandlerNoAPI:
                     # assume 0 viewer if unable to find digits
                     current_viewers = int(viewer_digits.group()) if viewer_digits.group() else 0
                     if current_viewers > highest_viewers:
-                        highest_viewers, highest_index = current_viewers, current_index
+                        highest_viewers, highest_index = current_viewers, j
             if not found_live:
                 raise Exception('Unable to find a livestream for this channel right now.')
             data_videos_item_video = data_videos_item_video[highest_index]['gridVideoRenderer']
