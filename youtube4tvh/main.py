@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Purpose:      Save a Youtube live-stream to an M3U playlist
 # Author:       cgomesu
-# Date:         September 14th, 2020
+# Date:         September 24th, 2020
 # Disclaimer:   Use at your own discretion.
 #               Be mindful of the API daily quota.
 #               The author does not provide any sort warranty whatsoever.
@@ -169,7 +169,7 @@ def update_stream():
         print('[INFO] Updating channel: {}...'.format(channel))
         print('##############################################')
         args_cli['channelname'], args_cli['channelid'], args_cli['channellogo'] = channel, '', ''
-        # TODO: improve the way errors are handled (retry then change request method)
+        # TODO: improve the way errors are handled (e.g., try with /channelid/live)
         try:
             add_stream()
         except Exception:
