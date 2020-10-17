@@ -1,19 +1,20 @@
-# Youtube 4 tvh
-Youtube4tvh is a Python CLI program to find Youtube live-streams and create (or update) m3u playlists for a TVHeadend server (TVH; https://github.com/tvheadend/tvheadend). The m3u file follows IPTV conventions that allow a TVH server to automatically create an IPTV network with them, and each stream is piped into TVH via a Streamlink (https://streamlink.github.io/) shell script.
+# youtube4tvh
+**youtube4tvh** is a CLI program written in Python that finds Youtube live-streams and creates/updates m3u playlists for a TVHeadend server (TVH; https://github.com/tvheadend/tvheadend). The m3u file follows IPTV conventions that allow a TVH server to automatically create an IPTV network with them, and each stream is piped into TVH via a Streamlink (https://streamlink.github.io/) shell script.
 
-This utility is part of a guide I wrote on how to create an IPTV network in a TVH server composed entirely of Youtube live-streams.  You can read about it on my blog post (https://cgomesu.com/blog/Youtube-as-IPTV-with-TVH/).
+This utility is part of a guide I wrote on how to create an IPTV network in a TVH server composed entirely of Youtube live-streams.  You can read about it on (**my blog post**)[https://cgomesu.com/blog/Youtube-as-IPTV-with-TVH/].
 
 
-# Status
-```diff
-- Working
-- Last checked on: September 14th 2020
-```
+# Client demos
+
+## Kodi
+<p align="center"><img src="img/youtube4tvh-demo-01.gif"></p>
+
+## TVH webUI
+<p align="center"><img src="img/youtube4tvh-demo-02.gif"></p>
 
 
 # Modular structure
-
-![TVH layout](img/modular_structure_v011.jpg)
+<p align="center"><img src="img/modular_structure_v011.jpg"></p>
 
 
 # Requirements
@@ -33,7 +34,7 @@ This utility is part of a guide I wrote on how to create an IPTV network in a TV
 # Suggested TVH client-server layout
 In general, this program is well suited for a TVH server that has the following layout:
 
-![TVH layout](img/tvh_layout.jpg)
+<p align="center"><img src="img/tvh_layout.jpg"></p>
 
 That is, there's one or more client that accesses a single TVH server that reads an m3u playlist (output.m3u) that contains one or more muxes from Youtube live-streams. Such a playlist is generated and managed by the current Python program (youtube4tvh/main.py) and the live-streams are piped into the TVH server via Streamlink. 
 
