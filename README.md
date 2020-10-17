@@ -6,17 +6,15 @@ This utility is part of a guide I wrote on how to create an IPTV network in a TV
 
 # Client demos
 
-<p align="center">
-  <img src="img/youtube4tvh-demo-01.gif">
-  <img src="img/youtube4tvh-demo-02.gif">
-</p>
+## Kodi
+<p align="center"><img src="img/youtube4tvh-demo-01.gif"></p>
+
+## TVH webUI
+<p align="center"><img src="img/youtube4tvh-demo-02.gif"></p>
 
 
 # Modular structure
-
-<p align="center">
-  <img src="img/modular_structure_v011.jpg">
-</p>
+<p align="center"><img src="img/modular_structure_v011.jpg"></p>
 
 
 # Requirements
@@ -36,9 +34,7 @@ This utility is part of a guide I wrote on how to create an IPTV network in a TV
 # Suggested TVH client-server layout
 In general, this program is well suited for a TVH server that has the following layout:
 
-<p align="center">
-  <img src="img/tvh_layout.jpg">
-</p>
+<p align="center"><img src="img/tvh_layout.jpg"></p>
 
 That is, there's one or more client that accesses a single TVH server that reads an m3u playlist (output.m3u) that contains one or more muxes from Youtube live-streams. Such a playlist is generated and managed by the current Python program (youtube4tvh/main.py) and the live-streams are piped into the TVH server via Streamlink. 
 
