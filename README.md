@@ -7,7 +7,7 @@ This utility is part of a guide I wrote on how to create an IPTV network in a TV
 # Client demos
 
 ## Kodi
-<p align="center"><img src="img/youtube4tvh-demo-01.gif"></p>
+<p align="center"><a href="https://youtu.be/9FSPf5wISUY"><img src="img/youtube4tvh-demo-01.gif"></a></p>
 
 ## TVH webUI
 <p align="center"><img src="img/youtube4tvh-demo-02.gif"></p>
