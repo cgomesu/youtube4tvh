@@ -1,3 +1,11 @@
+# READ THIS
+
+## January 21st, 2021
+The tutorial related to this program **has been deprecated**.  There's a **new tutorial** about the integration between Tvheadend and Streamlink--called **[TVHlink: Livestreams as IPTV channels with TVHeadend and Streamlink](https://cgomesu.com/blog/Tvhlink/)**--that greatly simplified the integration.  More specifically, the **youtube4tvh** tool is no longer required to manage `m3u` playlists of Youtube livestreams.  However, this tool still works just fine, so I won't archive this repo just yet.
+
+* All files directly related to the new **TVHlink integration**, such as Docker container helper scripts and curated `m3u` playlists, can be found on my **[tvhlink repo](https://github.com/cgomesu/tvhlink)**.
+
+
 # youtube4tvh
 **youtube4tvh** is a CLI program written in Python that finds Youtube live-streams and creates/updates m3u playlists for a TVHeadend server (TVH; https://github.com/tvheadend/tvheadend). The m3u file follows IPTV conventions that allow a TVH server to automatically create an IPTV network with them, and each stream is piped into TVH via a Streamlink (https://streamlink.github.io/) shell script.
 
