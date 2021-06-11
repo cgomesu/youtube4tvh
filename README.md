@@ -1,6 +1,6 @@
 # READ THIS
 ## June 11th, 2021
-I'm no longer maintaining this repo and do not know if the **youtube4tvh** toll still works or not.  For this reason, I'm now archiving the repo.  See the note below for a reference to the latest guide.
+I'm no longer maintaining this repo and do not know if the **youtube4tvh** tool still works.  For this reason, I'm now archiving the repo.  See the note below for a reference to the latest guide.
 
 ## January 21st, 2021
 The tutorial related to this program **has been deprecated**.  There's a **new tutorial** about the integration between Tvheadend and Streamlink--called **[TVHlink: Livestreams as IPTV channels with TVHeadend and Streamlink](https://cgomesu.com/blog/Tvhlink/)**--that greatly simplified the integration.  More specifically, the **youtube4tvh** tool is no longer required to manage `m3u` playlists of Youtube livestreams.  However, this tool still works just fine, so I won't archive this repo just yet.
